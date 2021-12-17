@@ -338,3 +338,83 @@ GeomAuc <- ggplot2::ggproto("GeomAuc", ggplot2::GeomArea,
 )
 
 
+prepare_method <- function(d,
+                           FUN,
+                           at = NULL,
+                           type = "predict",
+                           ...) {
+  # -------------------------------------------------------------------
+  # SET UP PRELIMINARIES
+  # -------------------------------------------------------------------
+  ## * Is 'at' some kind of 'data'
+  ## * or missing altogether ('none')
+  attype <- if (is.null(at) || names(formals(FUN))[1L] == "d") {
+    "none"
+  } else {
+    "data"
+  }
+
+  # -------------------------------------------------------------------
+  # PREPARE OUTPUT CONDITIONAL ON `attype`
+  # -------------------------------------------------------------------
+  ## If 'at' is missing: prediction is just a transformation of the parameters
+  if (attype == "none") {
+
+    rval <- FUN(d, ...)
+    if (is.null(dim(rval))) names(rval) <- rownames(d)
+
+  ## Otherwise 'at' is 'data':
+  ## set up a function that suitably expands 'at' (if necessary)
+  ## and then evaluates it at the predicted parameters ('data')
+  } else {
+    FUN2a <- function(at, d, ...) {
+      n <- NROW(d)
+      if (!is.data.frame(at)) {
+        if (length(at) == 1L) at <- rep.int(as.vector(at), n)
+        if (length(at) != n) at <- rbind(at)
+      }
+      if (is.matrix(at) && NROW(at) == 1L) {
+
+        at <- matrix(rep(at, each = n), nrow = n)
+        rv <- FUN(as.vector(at), d = d[rep(1L:n, ncol(at)), , drop = FALSE], ...)
+        rv <- matrix(rv, nrow = n)
+  
+        if (length(rv != 0L)) {
+          rownames(rv) <- rownames(d)
+          colnames(rv) <- paste(substr(type, 1L, 1L),
+            round(at[1L, ], digits = pmax(3L, getOption("digits") - 3L)),
+            sep = "_"
+          )
+        }
+      } else {
+        rv <- FUN(at, d = d, ...)
+
+        if (length(rv != 0L)) {
+          if (is.null(dim(rv))) {
+            names(rv) <- rownames(d)
+          } else {
+            colnames(rv) <- paste(substr(type, 1L, 1L),
+              seq(1, ncol(rv)),
+              sep = "_"
+            )
+          }
+        }
+        
+      }
+      return(rv)
+    }
+
+    rval <- FUN2a(at, d = d, ...)
+  }
+
+  # -------------------------------------------------------------------
+  # RETURN
+  # -------------------------------------------------------------------
+  
+  if (is.null(dim(rval)) || NROW(rval) == 1L) {
+    rval <- unname(drop(rval))
+  }
+
+  return(rval)
+}
+

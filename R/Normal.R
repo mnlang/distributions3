@@ -158,8 +158,12 @@
 #' quantile(X, cdf(X, 7))
 #'
 Normal <- function(mu = 0, sigma = 1) {
-  d <- list(mu = mu, sigma = sigma)
-  class(d) <- c("Normal", "distribution")
+  stopifnot(
+    "parameter lengths do not match (only scalars are allowed to be recycled)" = 
+    length(mu) == length(sigma) | length(mu) == 1 | length(sigma) == 1
+  )
+  d <- data.frame(mu = mu, sigma = sigma)
+  class(d) <- c("Normal", "distribution", class(d))
   d
 }
 
@@ -171,17 +175,35 @@ print.Normal <- function(x, ...) {
 #' @export
 mean.Normal <- function(x, ...) {
   ellipsis::check_dots_used()
-  x$mu
+
+  FUN <- function(d) d$mu
+  prepare_method(d = x, FUN = FUN, at = NULL, type = "mean")
 }
 
 #' @export
-variance.Normal <- function(x, ...) x$sigma ^ 2
+variance.Normal <- function(x, ...) {
+
+  FUN <- function(d) d$sigma ^ 2
+  prepare_method(d = x, FUN = FUN, at = NULL, type = "variance")
+
+}
 
 #' @export
-skewness.Normal <- function(x, ...) 0
+skewness.Normal <- function(x, ...) {
+
+  FUN <- function(d) rep(0, NROW(d))
+  prepare_method(d = x, FUN = FUN, at = NULL, type = "skewness")
+
+}
 
 #' @export
-kurtosis.Normal <- function(x, ...) 0
+kurtosis.Normal <- function(x, ...) {
+
+  FUN <- function(d) rep(0, NROW(d))
+  prepare_method(d = x, FUN = FUN, at = NULL, type = "skewness")
+
+}
+
 
 #' Draw a random sample from a Normal distribution
 #'
@@ -201,7 +223,21 @@ kurtosis.Normal <- function(x, ...) 0
 #'
 #'
 random.Normal <- function(x, n = 1L, ...) {
-  rnorm(n = n, mean = x$mu, sd = x$sigma)
+  FUN <- function(at, d) {
+    rval <- drop(
+      t(sapply(1:NROW(d), 
+        function(idx) rnorm(n = at[idx], mean = d$mu[idx], sd = d$sigma[idx])
+      ))
+    )
+
+    if (is.list(rval) && is.vector(rval) && length(rval) == 1L) {
+      return(rval[[1]])
+    } else {
+      return(rval)
+    }
+  }
+  prepare_method(d = x, FUN = FUN, at = n, type = "random")
+
 }
 
 #' Evaluate the probability mass function of a Normal distribution
@@ -224,14 +260,20 @@ random.Normal <- function(x, n = 1L, ...) {
 #' @export
 #'
 pdf.Normal <- function(d, x, ...) {
-  dnorm(x = x, mean = d$mu, sd = d$sigma)
+
+  FUN <- function(at, d) dnorm(x = at, mean = d$mu, sd = d$sigma)
+  prepare_method(d = d, FUN = FUN, at = x, type = "pdf")
+
 }
 
 #' @rdname pdf.Normal
 #' @export
 #'
 log_pdf.Normal <- function(d, x, ...) {
-  dnorm(x = x, mean = d$mu, sd = d$sigma, log = TRUE)
+
+  FUN <- function(at, d) dnorm(x = at, mean = d$mu, sd = d$sigma, log = TRUE)
+  prepare_method(d = d, FUN = FUN, at = x, type = "log_pdf")
+
 }
 
 #' Evaluate the cumulative distribution function of a Normal distribution
@@ -250,7 +292,8 @@ log_pdf.Normal <- function(d, x, ...) {
 #' @export
 #'
 cdf.Normal <- function(d, x, ...) {
-  pnorm(q = x, mean = d$mu, sd = d$sigma)
+  FUN <- function(at, d) pnorm(q = at, mean = d$mu, sd = d$sigma)
+  prepare_method(d = d, FUN = FUN, at = x, type = "pdf")
 }
 
 #' Determine quantiles of a Normal distribution
@@ -279,7 +322,10 @@ cdf.Normal <- function(d, x, ...) {
 #'
 quantile.Normal <- function(x, probs, ...) {
   ellipsis::check_dots_used()
-  qnorm(p = probs, mean = x$mu, sd = x$sigma)
+  
+  FUN <- function(at, d) qnorm(at, mean = d$mu, sd = d$sigma)
+  prepare_method(d = x, FUN = FUN, at = probs, type = "quantile")
+
 }
 
 #' Fit a Normal distribution to data
@@ -324,9 +370,23 @@ suff_stat.Normal <- function(d, x, ...) {
 #'
 #' @export
 support.Normal <- function(d){
+
   if(!is_distribution(d)){
     message("d has to be a disitrubtion")
     stop()
   }
-  return(c(-Inf, Inf))
+
+  ## FIXME: (ML) Adapt prepare_method, to pass over named vector. Currently problematic as FUN has no `at`.
+  FUN <- function(d) {
+    drop(
+      matrix(
+        c(-Inf, Inf), 
+        ncol = 2, 
+        nrow = NROW(d), 
+        byrow = TRUE,
+        dimnames = list(1:NROW(d), c("lb", "ub"))
+      )
+    )
+  }
+  prepare_method(d = d, FUN = FUN, at = NULL, type = "support")
 }
