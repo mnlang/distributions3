@@ -341,7 +341,9 @@ GeomAuc <- ggplot2::ggproto("GeomAuc", ggplot2::GeomArea,
 prepare_method <- function(d,
                            FUN,
                            at = NULL,
+                           drop = TRUE,
                            type = "predict",
+                           name_suffix = NULL,
                            ...) {
   # -------------------------------------------------------------------
   # SET UP PRELIMINARIES
@@ -350,6 +352,10 @@ prepare_method <- function(d,
   ## * or missing altogether ('none')
   attype <- if (is.null(at) || names(formals(FUN))[1L] == "d") {
     "none"
+  } else if (type == "random") {
+    "counts"
+  } else if (type == "support") {
+    "tuple"
   } else {
     "data"
   }
@@ -363,58 +369,200 @@ prepare_method <- function(d,
     rval <- FUN(d, ...)
     if (is.null(dim(rval))) names(rval) <- rownames(d)
 
-  ## Otherwise 'at' is 'data':
-  ## set up a function that suitably expands 'at' (if necessary)
-  ## and then evaluates it at the predicted parameters ('data')
-  } else {
-    FUN2a <- function(at, d, ...) {
-      n <- NROW(d)
-      if (!is.data.frame(at)) {
-        if (length(at) == 1L) at <- rep.int(as.vector(at), n)
-        if (length(at) != n) at <- rbind(at)
-      }
-      if (is.matrix(at) && NROW(at) == 1L) {
+  } else if (attype == "counts") {
+    FUN2 <- function(at, d, ...) {
 
-        at <- matrix(rep(at, each = n), nrow = n)
-        rv <- FUN(as.vector(at), d = d[rep(1L:n, ncol(at)), , drop = FALSE], ...)
-        rv <- matrix(rv, nrow = n)
-  
-        if (length(rv != 0L)) {
-          rownames(rv) <- rownames(d)
+      n <- NROW(d)
+      rv <- do.call(rbind, lapply(1:length(d), function(i) FUN(at, d[i, ,drop = FALSE]))) 
+      rv <- drop(rv)
+
+      if (!is.null(dim(rv)) && length(rv != 0L)) {
+        rownames(rv) <- rownames(d)
+        colnames(rv) <- paste(substr(type, 1L, 1L), seq.int(1L, unique(at)), sep = "_")
+      }
+      return(rv)
+    }
+
+    rval <- FUN2(at, d = d, ...)
+
+  } else if (attype == "tuple") {
+    FUN3 <- function(at, d, ...) {
+      n <- NROW(d)
+      at <- matrix(at, ncol = 2, nrow = n, byrow = TRUE)
+      rv <- FUN(as.vector(at), d = d[rep(1L:n, ncol(at)), , drop = FALSE], ...)
+      rv <- matrix(rv, nrow = n)
+
+      if (length(rv != 0L)) {
+        rownames(rv) <- rownames(d)
+        if (length(name_suffix) == NCOL(rv)) {
+          colnames(rv) <- paste(substr(type, 1L, 1L),
+            name_suffix,
+            sep = "_"
+          )
+        } else { 
           colnames(rv) <- paste(substr(type, 1L, 1L),
             round(at[1L, ], digits = pmax(3L, getOption("digits") - 3L)),
             sep = "_"
           )
         }
-      } else {
-        rv <- FUN(at, d = d, ...)
-
-        if (length(rv != 0L)) {
-          if (is.null(dim(rv))) {
-            names(rv) <- rownames(d)
-          } else {
-            colnames(rv) <- paste(substr(type, 1L, 1L),
-              seq(1, ncol(rv)),
-              sep = "_"
-            )
-          }
-        }
-        
       }
       return(rv)
     }
 
-    rval <- FUN2a(at, d = d, ...)
+    rval <- FUN3(at, d = d, ...)
+  
+  ## Otherwise 'at' is 'data':
+  ## set up a function that suitably expands 'at' (if necessary)
+  ## and then evaluates it at the predicted parameters ('data')
+  } else {
+    FUN4 <- function(at, d, ...) {
+
+      n <- NROW(d)
+      if (!is.data.frame(at)) {
+        if (length(at) == 1L) at <- rep.int(as.vector(at), n)  ## as vector (case 1)
+        if (length(at) != n) at <- rbind(at)  ## as matrix (case 2)
+      }
+      if (is.matrix(at) && NROW(at) == 1L) {  ## case 2
+        at <- matrix(rep(at, each = n), nrow = n)
+        rv <- FUN(as.vector(at), d = d[rep(1L:n, ncol(at)), , drop = FALSE], ...)
+        rv <- matrix(rv, nrow = n)
+
+        if (length(rv != 0L)) {
+          rownames(rv) <- rownames(d)
+          if (length(name_suffix) == NCOL(rv)) {
+            colnames(rv) <- paste(substr(type, 1L, 1L),
+              name_suffix,
+              sep = "_"
+            )
+          } else { 
+            colnames(rv) <- paste(substr(type, 1L, 1L),
+              round(at[1L, ], digits = pmax(3L, getOption("digits") - 3L)),
+              sep = "_"
+            )
+          }
+        }
+      } else {  ## case 1
+        rv <- FUN(at, d = d, ...)
+        names(rv) <- rownames(d)
+      }
+      return(rv)
+    }
+
+    rval <- FUN4(at, d = d, ...)
   }
 
   # -------------------------------------------------------------------
   # RETURN
   # -------------------------------------------------------------------
-  
-  if (is.null(dim(rval)) || NROW(rval) == 1L) {
-    rval <- unname(drop(rval))
+  ## return a data.frame (drop=FALSE) or should it be dropped
+  ## to a vector if possible (drop=TRUE): default = TRUE
+  if (drop) {
+    if (!is.null(dim(rval)) && NROW(rval) == 1L) {
+      rval <- unname(drop(rval))
+    }
+  } else {
+    if (is.null(dim(rval))) {
+      rval <- as.matrix(rval)
+      if (ncol(rval) == 1L) colnames(rval) <- type
+    }
+    if (!inherits(rval, "data.frame")) rval <- as.data.frame(rval)
   }
 
   return(rval)
 }
 
+
+## Methods ---------------------------------------------------------------------
+
+#' @export
+dim.distribution <- function(x) NULL
+
+#' @export
+length.distribution <- function(x) length(unclass(x)[[1L]])
+
+#' @export
+`[.distribution` <- function(x, i, j, drop = FALSE) {
+  cl <- class(x)
+  class(x) <- "data.frame"
+  x <- x[i, j, drop = drop]
+  class(x) <- cl
+  return(x)
+}
+
+#' @export
+format.distribution <- function(x, digits = getOption("digits") - 3L, ...) {
+  cl <- class(x)[1L]
+  n <- names(x)
+  if(is.null(attr(x, "row.names"))) attr(x, "row.names") <- 1L:length(x) ## FIXME: should always be part of the object, see Nrml()
+  class(x) <- "data.frame"
+  f <- sprintf("%s distribution (%s)", cl, apply(as.matrix(x), 1L, function(p) paste(names(x), "=", format(as.vector(p), digits = digits, ...), collapse = ", ")))
+  setNames(f, n)
+}
+
+#' @export
+print.distribution <- function(x, digits = getOption("digits") - 3L, ...) {
+  print(format(x, digits = digits), ...)
+  invisible(x)
+}
+
+#' @export
+names.distribution <- function(x) {
+  n <- attr(x, "row.names")
+  if(identical(n, seq_along(x))) NULL else n
+}
+
+#' @export
+`names<-.distribution` <- function(x, value) {
+  cl <- class(x)
+  class(x) <- "data.frame"
+  rownames(x) <- value
+  class(x) <- cl
+  return(x)
+}
+
+## FIXME: What should as.data.frame produce?
+## (a) Data frame of parameters
+as_data_frame_parameters <- function(x, ...) {
+  class(x) <- "data.frame"
+  return(x)
+}
+
+## (b) Data frame with distribution column
+as_data_frame_column <- function(x, ...) {
+  d <- data.frame(x = seq_along(x))
+  rownames(d) <- names(x)
+  d$x <- x
+  names(d) <- deparse(substitute(x)) ## FIXME preserve name in data.frame(foo = n)
+  return(d)
+}
+
+## currently go with (b) and use (a) in as.matrix
+
+#' @export
+as.data.frame.distribution <- as_data_frame_column
+
+#' @export
+as.matrix.distribution <- function(x, ...) {
+  x <- as_data_frame_parameters(x, ...)
+  as.matrix(x)
+}
+
+#' @export
+c.distribution <- function(...) {
+  x <- list(...)
+  cl <- class(x[[1L]])
+  x <- lapply(x, function(d) {
+    class(d) <- "data.frame"
+    d
+  })
+  x <- do.call("rbind", x)
+  class(x) <- cl
+  return(x)
+}
+
+#' @export
+summary.distribution <- function(object, ...) {
+  cat(sprintf("%s distribution:", class(object)[1L]), "\n")
+  class(object) <- "data.frame"
+  summary(object, ...)
+}

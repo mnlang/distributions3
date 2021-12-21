@@ -107,7 +107,7 @@ test_that("vectorization of Normal work correctly", {
       nrow = 2, 
       ncol = 3, 
       byrow = TRUE,
-      dimnames = list(1:2, c("q_0.1", "q_0.5", "q_0.9"))
+      dimnames = list(NULL, c("q_0.1", "q_0.5", "q_0.9"))
     )
   )
 
@@ -118,7 +118,7 @@ test_that("vectorization of Normal work correctly", {
       nrow = 2, 
       ncol = 2, 
       byrow = TRUE,
-      dimnames = list(1:2, c("lb", "ub"))
+      dimnames = list(NULL, c("s_lb", "s_ub"))
     )
   )
 })
