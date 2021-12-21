@@ -202,7 +202,7 @@ suff_stat <- function(d, x, ...) {
 #' @return A vector with two elements indicating the range of the support.
 #'
 #' @export
-support <- function(d){
+support <- function(d, drop = TRUE){
   if(!is_distribution(d))
     stop("d must be a supported distribution object")
 

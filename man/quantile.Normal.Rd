@@ -4,12 +4,14 @@
 \alias{quantile.Normal}
 \title{Determine quantiles of a Normal distribution}
 \usage{
-\method{quantile}{Normal}(x, probs, ...)
+\method{quantile}{Normal}(x, probs, drop = TRUE, ...)
 }
 \arguments{
 \item{x}{A \code{Normal} object created by a call to \code{\link[=Normal]{Normal()}}.}
 
 \item{probs}{A vector of probabilites.}
+
+\item{drop}{logical. Shoul the result be simplified to a vector if possible?}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}

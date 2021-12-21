@@ -199,6 +199,7 @@ kurtosis.Normal <- function(x, ...) {
 #'
 #' @param x A `Normal` object created by a call to [Normal()].
 #' @param n The number of samples to draw. Defaults to `1L`.
+#' @param drop logical. Should the result be simplified to a vector if possible?
 #' @param ... Unused. Unevaluated arguments will generate a warning to
 #'   catch mispellings or other possible errors.
 #'
@@ -206,9 +207,9 @@ kurtosis.Normal <- function(x, ...) {
 #' @export
 #'
 #'
-random.Normal <- function(x, n = 1L, ...) {
+random.Normal <- function(x, n = 1L, drop = TRUE, ...) {
   FUN <- function(at, d) rnorm(n = at, mean = d$mu, sd = d$sigma)
-  prepare_method(d = x, FUN = FUN, at = n, type = "random")
+  prepare_method(d = x, FUN = FUN, at = n, type = "random", drop = drop)
 }
 
 #' Evaluate the probability mass function of a Normal distribution
@@ -222,6 +223,7 @@ random.Normal <- function(x, n = 1L, ...) {
 #' @param d A `Normal` object created by a call to [Normal()].
 #' @param x A vector of elements whose probabilities you would like to
 #'   determine given the distribution `d`.
+#' @param drop logical. Should the result be simplified to a vector if possible?
 #' @param ... Unused. Unevaluated arguments will generate a warning to
 #'   catch mispellings or other possible errors.
 #'
@@ -230,20 +232,20 @@ random.Normal <- function(x, n = 1L, ...) {
 #' @return A vector of probabilities, one for each element of `x`.
 #' @export
 #'
-pdf.Normal <- function(d, x, ...) {
+pdf.Normal <- function(d, x, drop = TRUE, ...) {
 
   FUN <- function(at, d) dnorm(x = at, mean = d$mu, sd = d$sigma)
-  prepare_method(d = d, FUN = FUN, at = x, type = "pdf")
+  prepare_method(d = d, FUN = FUN, at = x, type = "pdf", drop = drop)
 
 }
 
 #' @rdname pdf.Normal
 #' @export
 #'
-log_pdf.Normal <- function(d, x, ...) {
+log_pdf.Normal <- function(d, x, drop = TRUE, ...) {
 
   FUN <- function(at, d) dnorm(x = at, mean = d$mu, sd = d$sigma, log = TRUE)
-  prepare_method(d = d, FUN = FUN, at = x, type = "log_pdf")
+  prepare_method(d = d, FUN = FUN, at = x, type = "log_pdf", drop = drop)
 
 }
 
@@ -254,6 +256,7 @@ log_pdf.Normal <- function(d, x, ...) {
 #' @param d A `Normal` object created by a call to [Normal()].
 #' @param x A vector of elements whose cumulative probabilities you would
 #'   like to determine given the distribution `d`.
+#' @param drop logical. Shoul the result be simplified to a vector if possible?
 #' @param ... Unused. Unevaluated arguments will generate a warning to
 #'   catch mispellings or other possible errors.
 #'
@@ -262,9 +265,9 @@ log_pdf.Normal <- function(d, x, ...) {
 #' @return A vector of probabilities, one for each element of `x`.
 #' @export
 #'
-cdf.Normal <- function(d, x, ...) {
+cdf.Normal <- function(d, x, drop = TRUE, ...) {
   FUN <- function(at, d) pnorm(q = at, mean = d$mu, sd = d$sigma)
-  prepare_method(d = d, FUN = FUN, at = x, type = "cdf")
+  prepare_method(d = d, FUN = FUN, at = x, type = "cdf", drop = drop)
 }
 
 #' Determine quantiles of a Normal distribution
@@ -283,6 +286,7 @@ cdf.Normal <- function(d, x, ...) {
 #' @inheritParams random.Normal
 #'
 #' @param probs A vector of probabilites.
+#' @param drop logical. Shoul the result be simplified to a vector if possible?
 #' @param ... Unused. Unevaluated arguments will generate a warning to
 #'   catch mispellings or other possible errors.
 #'
@@ -291,11 +295,11 @@ cdf.Normal <- function(d, x, ...) {
 #'
 #' @family Normal distribution
 #'
-quantile.Normal <- function(x, probs, ...) {
+quantile.Normal <- function(x, probs, drop = TRUE, ...) {
   ellipsis::check_dots_used()
   
   FUN <- function(at, d) qnorm(at, mean = d$mu, sd = d$sigma)
-  prepare_method(d = x, FUN = FUN, at = probs, type = "quantile")
+  prepare_method(d = x, FUN = FUN, at = probs, type = "quantile", drop = drop)
 }
 
 #' Fit a Normal distribution to data
@@ -335,11 +339,12 @@ suff_stat.Normal <- function(d, x, ...) {
 #' Return the support of the Normal distribution
 #'
 #' @param d An `Normal` object created by a call to [Normal()].
+#' @param drop logical. Shoul the result be simplified to a vector if possible?
 #'
 #' @return A vector of length 2 with the minimum and maximum value of the support.
 #'
 #' @export
-support.Normal <- function(d){
+support.Normal <- function(d, drop = TRUE){
 
   if(!is_distribution(d)){
     message("d has to be a disitrubtion")
@@ -348,5 +353,5 @@ support.Normal <- function(d){
 
   FUN  <- function(at, d) at
   prepare_method(d = d, FUN = FUN, at = c(-Inf, Inf), type = "support", 
-    name_suffix = c("lb", "ub"))
+    name_suffix = c("lb", "ub"), drop = drop)
 }
