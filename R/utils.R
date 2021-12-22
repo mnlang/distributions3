@@ -338,13 +338,13 @@ GeomAuc <- ggplot2::ggproto("GeomAuc", ggplot2::GeomArea,
 )
 
 
-prepare_method <- function(d,
-                           FUN,
-                           at = NULL,
-                           drop = TRUE,
-                           type = "predict",
-                           name_suffix = NULL,
-                           ...) {
+apply_dpqr <- function(d,
+                       FUN,
+                       at = NULL,
+                       drop = TRUE,
+                       type = "predict",
+                       name_suffix = NULL,
+                       ...) {
   # -------------------------------------------------------------------
   # SET UP PRELIMINARIES
   # -------------------------------------------------------------------
@@ -373,7 +373,7 @@ prepare_method <- function(d,
     FUN2 <- function(at, d, ...) {
 
       n <- NROW(d)
-      rv <- do.call(rbind, lapply(1:length(d), function(i) FUN(at, d[i, ,drop = FALSE]))) 
+      rv <- do.call(rbind, lapply(1:length(d), function(i) FUN(at, d[i]))) 
       rv <- drop(rv)
 
       if (!is.null(dim(rv)) && length(rv != 0L)) {
@@ -389,7 +389,7 @@ prepare_method <- function(d,
     FUN3 <- function(at, d, ...) {
       n <- NROW(d)
       at <- matrix(at, ncol = 2, nrow = n, byrow = TRUE)
-      rv <- FUN(as.vector(at), d = d[rep(1L:n, ncol(at)), , drop = FALSE], ...)
+      rv <- FUN(as.vector(at), d = d[rep(1L:n, ncol(at))], ...)
       rv <- matrix(rv, nrow = n)
 
       if (length(rv != 0L)) {
@@ -424,7 +424,7 @@ prepare_method <- function(d,
       }
       if (is.matrix(at) && NROW(at) == 1L) {  ## case 2
         at <- matrix(rep(at, each = n), nrow = n)
-        rv <- FUN(as.vector(at), d = d[rep(1L:n, ncol(at)), , drop = FALSE], ...)
+        rv <- FUN(as.vector(at), d = d[rep(1L:n, ncol(at))], ...)
         rv <- matrix(rv, nrow = n)
 
         if (length(rv != 0L)) {
@@ -481,13 +481,13 @@ dim.distribution <- function(x) NULL
 length.distribution <- function(x) length(unclass(x)[[1L]])
 
 #' @export
-`[.distribution` <- function(x, i, j, drop = FALSE) {
+`[.distribution` <- function(x, i) {
   cl <- class(x)
   class(x) <- "data.frame"
-  x <- x[i, j, drop = drop]
+  x <- x[i, , drop = FALSE]
   class(x) <- cl
   return(x)
-}
+} 
 
 #' @export
 format.distribution <- function(x, digits = getOption("digits") - 3L, ...) {

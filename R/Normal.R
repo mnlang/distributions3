@@ -209,7 +209,7 @@ kurtosis.Normal <- function(x, ...) {
 #'
 random.Normal <- function(x, n = 1L, drop = TRUE, ...) {
   FUN <- function(at, d) rnorm(n = at, mean = d$mu, sd = d$sigma)
-  prepare_method(d = x, FUN = FUN, at = n, type = "random", drop = drop)
+  apply_dpqr(d = x, FUN = FUN, at = n, type = "random", drop = drop)
 }
 
 #' Evaluate the probability mass function of a Normal distribution
@@ -235,7 +235,7 @@ random.Normal <- function(x, n = 1L, drop = TRUE, ...) {
 pdf.Normal <- function(d, x, drop = TRUE, ...) {
 
   FUN <- function(at, d) dnorm(x = at, mean = d$mu, sd = d$sigma)
-  prepare_method(d = d, FUN = FUN, at = x, type = "pdf", drop = drop)
+  apply_dpqr(d = d, FUN = FUN, at = x, type = "pdf", drop = drop)
 
 }
 
@@ -245,7 +245,7 @@ pdf.Normal <- function(d, x, drop = TRUE, ...) {
 log_pdf.Normal <- function(d, x, drop = TRUE, ...) {
 
   FUN <- function(at, d) dnorm(x = at, mean = d$mu, sd = d$sigma, log = TRUE)
-  prepare_method(d = d, FUN = FUN, at = x, type = "log_pdf", drop = drop)
+  apply_dpqr(d = d, FUN = FUN, at = x, type = "log_pdf", drop = drop)
 
 }
 
@@ -267,7 +267,7 @@ log_pdf.Normal <- function(d, x, drop = TRUE, ...) {
 #'
 cdf.Normal <- function(d, x, drop = TRUE, ...) {
   FUN <- function(at, d) pnorm(q = at, mean = d$mu, sd = d$sigma)
-  prepare_method(d = d, FUN = FUN, at = x, type = "cdf", drop = drop)
+  apply_dpqr(d = d, FUN = FUN, at = x, type = "cdf", drop = drop)
 }
 
 #' Determine quantiles of a Normal distribution
@@ -299,7 +299,7 @@ quantile.Normal <- function(x, probs, drop = TRUE, ...) {
   ellipsis::check_dots_used()
   
   FUN <- function(at, d) qnorm(at, mean = d$mu, sd = d$sigma)
-  prepare_method(d = x, FUN = FUN, at = probs, type = "quantile", drop = drop)
+  apply_dpqr(d = x, FUN = FUN, at = probs, type = "quantile", drop = drop)
 }
 
 #' Fit a Normal distribution to data
@@ -352,6 +352,6 @@ support.Normal <- function(d, drop = TRUE){
   }
 
   FUN  <- function(at, d) at
-  prepare_method(d = d, FUN = FUN, at = c(-Inf, Inf), type = "support", 
+  apply_dpqr(d = d, FUN = FUN, at = c(-Inf, Inf), type = "support", 
     name_suffix = c("lb", "ub"), drop = drop)
 }
