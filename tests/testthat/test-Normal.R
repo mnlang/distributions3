@@ -82,8 +82,8 @@ test_that("{moments}.Normal work correctly", {
 
 test_that("vectorization of Normal work correctly", {
   n <- Normal(c(0, 10), c(1, 1))
-  n1 <- n[1L, ]
-  n2 <- n[2L, ]
+  n1 <- n[1]
+  n2 <- n[2]
 
   expect_equal(mean(n), c(mean(n1), mean(n2)))
   expect_equal(variance(n), c(variance(n1), variance(n2)))
@@ -118,7 +118,7 @@ test_that("vectorization of Normal work correctly", {
       nrow = 2, 
       ncol = 2, 
       byrow = TRUE,
-      dimnames = list(NULL, c("s_lb", "s_ub"))
+      dimnames = list(NULL, c("lb", "ub"))
     )
   )
 })

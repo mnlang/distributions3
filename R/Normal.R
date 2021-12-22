@@ -208,9 +208,9 @@ kurtosis.Normal <- function(x, ...) {
 #'
 #'
 random.Normal <- function(x, n = 1L, drop = TRUE, ...) {
-  FUN <- function(at, d) rnorm(n = at, mean = d$mu, sd = d$sigma)
-  apply_dpqr(d = x, FUN = FUN, at = n, type = "random", drop = drop)
-}
+  FUN <- function(at, d) rnorm(n = length(d), mean = d$mu, sd = d$sigma)
+  apply_dpqr(d = x, FUN = FUN, at = rep.int(1, n), type = "random", drop = drop)
+} 
 
 #' Evaluate the probability mass function of a Normal distribution
 #'
@@ -351,7 +351,18 @@ support.Normal <- function(d, drop = TRUE){
     stop()
   }
 
-  FUN  <- function(at, d) at
-  apply_dpqr(d = d, FUN = FUN, at = c(-Inf, Inf), type = "support", 
-    name_suffix = c("lb", "ub"), drop = drop)
+  stopifnot(is.logical(drop))
+
+  rval <- matrix(
+    rep(c(-Inf, Inf), length(d)),
+    byrow = TRUE,
+    ncol = 2,
+    dimnames = list(NULL, c("lb", "ub"))
+  ) 
+
+  if (NROW(rval) == 1 && drop) {
+    unname(drop(rval))
+  } else {
+    rval
+  }
 }

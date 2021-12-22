@@ -343,8 +343,18 @@ apply_dpqr <- function(d,
                        at = NULL,
                        drop = TRUE,
                        type = "predict",
-                       name_suffix = NULL,
+   #                    name_suffix = NULL,
                        ...) {
+
+  # -------------------------------------------------------------------
+  # SANITY CHECKS
+  # -------------------------------------------------------------------
+  stopifnot(is_distribution(d))
+  stopifnot(is.function(FUN))
+  stopifnot(is.null(at) || is.numeric(at))
+  stopifnot(is.logical(drop))
+  stopifnot(is.character(type))
+
   # -------------------------------------------------------------------
   # SET UP PRELIMINARIES
   # -------------------------------------------------------------------
@@ -352,10 +362,10 @@ apply_dpqr <- function(d,
   ## * or missing altogether ('none')
   attype <- if (is.null(at) || names(formals(FUN))[1L] == "d") {
     "none"
-  } else if (type == "random") {
-    "counts"
-  } else if (type == "support") {
-    "tuple"
+  #} else if (type == "random") {
+  #  "counts"
+  #} else if (type == "support") {
+  #  "tuple"
   } else {
     "data"
   }
@@ -369,47 +379,47 @@ apply_dpqr <- function(d,
     rval <- FUN(d, ...)
     if (is.null(dim(rval))) names(rval) <- rownames(d)
 
-  } else if (attype == "counts") {
-    FUN2 <- function(at, d, ...) {
+  #} else if (attype == "counts") {
+  #  FUN2 <- function(at, d, ...) {
 
-      n <- NROW(d)
-      rv <- do.call(rbind, lapply(1:length(d), function(i) FUN(at, d[i]))) 
-      rv <- drop(rv)
+  #    n <- NROW(d)
+  #    rv <- do.call(rbind, lapply(1:length(d), function(i) FUN(at, d[i]))) 
+  #    rv <- drop(rv)
 
-      if (!is.null(dim(rv)) && length(rv != 0L)) {
-        rownames(rv) <- rownames(d)
-        colnames(rv) <- paste(substr(type, 1L, 1L), seq.int(1L, unique(at)), sep = "_")
-      }
-      return(rv)
-    }
+  #    if (!is.null(dim(rv)) && length(rv != 0L)) {
+  #      rownames(rv) <- rownames(d)
+  #      colnames(rv) <- paste(substr(type, 1L, 1L), seq.int(1L, unique(at)), sep = "_")
+  #    }
+  #    return(rv)
+  #  }
 
-    rval <- FUN2(at, d = d, ...)
+  #  rval <- FUN2(at, d = d, ...)
 
-  } else if (attype == "tuple") {
-    FUN3 <- function(at, d, ...) {
-      n <- NROW(d)
-      at <- matrix(at, ncol = 2, nrow = n, byrow = TRUE)
-      rv <- FUN(as.vector(at), d = d[rep(1L:n, ncol(at))], ...)
-      rv <- matrix(rv, nrow = n)
+  #} else if (attype == "tuple") {
+  #  FUN3 <- function(at, d, ...) {
+  #    n <- NROW(d)
+  #    at <- matrix(at, ncol = 2, nrow = n, byrow = TRUE)
+  #    rv <- FUN(as.vector(at), d = d[rep(1L:n, ncol(at))], ...)
+  #    rv <- matrix(rv, nrow = n)
 
-      if (length(rv != 0L)) {
-        rownames(rv) <- rownames(d)
-        if (length(name_suffix) == NCOL(rv)) {
-          colnames(rv) <- paste(substr(type, 1L, 1L),
-            name_suffix,
-            sep = "_"
-          )
-        } else { 
-          colnames(rv) <- paste(substr(type, 1L, 1L),
-            round(at[1L, ], digits = pmax(3L, getOption("digits") - 3L)),
-            sep = "_"
-          )
-        }
-      }
-      return(rv)
-    }
+  #    if (length(rv != 0L)) {
+  #      rownames(rv) <- rownames(d)
+  #      if (length(name_suffix) == NCOL(rv)) {
+  #        colnames(rv) <- paste(substr(type, 1L, 1L),
+  #          name_suffix,
+  #          sep = "_"
+  #        )
+  #      } else { 
+  #        colnames(rv) <- paste(substr(type, 1L, 1L),
+  #          round(at[1L, ], digits = pmax(3L, getOption("digits") - 3L)),
+  #          sep = "_"
+  #        )
+  #      }
+  #    }
+  #    return(rv)
+  #  }
 
-    rval <- FUN3(at, d = d, ...)
+  #  rval <- FUN3(at, d = d, ...)
   
   ## Otherwise 'at' is 'data':
   ## set up a function that suitably expands 'at' (if necessary)
@@ -429,17 +439,17 @@ apply_dpqr <- function(d,
 
         if (length(rv != 0L)) {
           rownames(rv) <- rownames(d)
-          if (length(name_suffix) == NCOL(rv)) {
-            colnames(rv) <- paste(substr(type, 1L, 1L),
-              name_suffix,
-              sep = "_"
-            )
-          } else { 
+          #if (length(name_suffix) == NCOL(rv)) {
+          #  colnames(rv) <- paste(substr(type, 1L, 1L),
+          #    name_suffix,
+          #    sep = "_"
+          #  )
+          #} else { 
             colnames(rv) <- paste(substr(type, 1L, 1L),
               round(at[1L, ], digits = pmax(3L, getOption("digits") - 3L)),
               sep = "_"
             )
-          }
+          #}
         }
       } else {  ## case 1
         rv <- FUN(at, d = d, ...)
