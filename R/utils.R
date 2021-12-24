@@ -342,8 +342,7 @@ apply_dpqr <- function(d,
                        FUN,
                        at = NULL,
                        drop = TRUE,
-                       type = "predict",
-   #                    name_suffix = NULL,
+                       type_prefix = "x",
                        ...) {
 
   # -------------------------------------------------------------------
@@ -353,7 +352,7 @@ apply_dpqr <- function(d,
   stopifnot(is.function(FUN))
   stopifnot(is.null(at) || is.numeric(at))
   stopifnot(is.logical(drop))
-  stopifnot(is.character(type))
+  stopifnot(is.character(type_prefix))
 
   # -------------------------------------------------------------------
   # SET UP PRELIMINARIES
@@ -362,10 +361,6 @@ apply_dpqr <- function(d,
   ## * or missing altogether ('none')
   attype <- if (is.null(at) || names(formals(FUN))[1L] == "d") {
     "none"
-  #} else if (type == "random") {
-  #  "counts"
-  #} else if (type == "support") {
-  #  "tuple"
   } else {
     "data"
   }
@@ -379,54 +374,11 @@ apply_dpqr <- function(d,
     rval <- FUN(d, ...)
     if (is.null(dim(rval))) names(rval) <- rownames(d)
 
-  #} else if (attype == "counts") {
-  #  FUN2 <- function(at, d, ...) {
-
-  #    n <- NROW(d)
-  #    rv <- do.call(rbind, lapply(1:length(d), function(i) FUN(at, d[i]))) 
-  #    rv <- drop(rv)
-
-  #    if (!is.null(dim(rv)) && length(rv != 0L)) {
-  #      rownames(rv) <- rownames(d)
-  #      colnames(rv) <- paste(substr(type, 1L, 1L), seq.int(1L, unique(at)), sep = "_")
-  #    }
-  #    return(rv)
-  #  }
-
-  #  rval <- FUN2(at, d = d, ...)
-
-  #} else if (attype == "tuple") {
-  #  FUN3 <- function(at, d, ...) {
-  #    n <- NROW(d)
-  #    at <- matrix(at, ncol = 2, nrow = n, byrow = TRUE)
-  #    rv <- FUN(as.vector(at), d = d[rep(1L:n, ncol(at))], ...)
-  #    rv <- matrix(rv, nrow = n)
-
-  #    if (length(rv != 0L)) {
-  #      rownames(rv) <- rownames(d)
-  #      if (length(name_suffix) == NCOL(rv)) {
-  #        colnames(rv) <- paste(substr(type, 1L, 1L),
-  #          name_suffix,
-  #          sep = "_"
-  #        )
-  #      } else { 
-  #        colnames(rv) <- paste(substr(type, 1L, 1L),
-  #          round(at[1L, ], digits = pmax(3L, getOption("digits") - 3L)),
-  #          sep = "_"
-  #        )
-  #      }
-  #    }
-  #    return(rv)
-  #  }
-
-  #  rval <- FUN3(at, d = d, ...)
-  
   ## Otherwise 'at' is 'data':
   ## set up a function that suitably expands 'at' (if necessary)
   ## and then evaluates it at the predicted parameters ('data')
   } else {
     FUN4 <- function(at, d, ...) {
-
       n <- NROW(d)
       if (!is.data.frame(at)) {
         if (length(at) == 1L) at <- rep.int(as.vector(at), n)  ## as vector (case 1)
@@ -439,17 +391,19 @@ apply_dpqr <- function(d,
 
         if (length(rv != 0L)) {
           rownames(rv) <- rownames(d)
-          #if (length(name_suffix) == NCOL(rv)) {
-          #  colnames(rv) <- paste(substr(type, 1L, 1L),
-          #    name_suffix,
-          #    sep = "_"
-          #  )
-          #} else { 
-            colnames(rv) <- paste(substr(type, 1L, 1L),
-              round(at[1L, ], digits = pmax(3L, getOption("digits") - 3L)),
-              sep = "_"
-            )
-          #}
+            if (all(at[1L, ] == 1L)) {
+              colnames(rv) <- paste(
+                type_prefix,
+                seq_along(at[1L, ]), 
+                sep = "_"
+              )
+            } else {
+              colnames(rv) <- paste(
+                type_prefix,
+                make_suffix(at[1L, ], digits = pmax(3L, getOption("digits") - 3L)),
+                sep = "_"
+              )
+          }
         }
       } else {  ## case 1
         rv <- FUN(at, d = d, ...)
@@ -473,7 +427,13 @@ apply_dpqr <- function(d,
   } else {
     if (is.null(dim(rval))) {
       rval <- as.matrix(rval)
-      if (ncol(rval) == 1L) colnames(rval) <- type
+      if (ncol(rval) == 1L) {
+        colnames(rval) <- paste(
+          type_prefix,
+          make_suffix(unique(at), digits = pmax(3L, getOption("digits") - 3L)),
+          sep = "_"
+        )
+      }
     }
     if (!inherits(rval, "data.frame")) rval <- as.data.frame(rval)
   }
@@ -558,6 +518,12 @@ as.matrix.distribution <- function(x, ...) {
 }
 
 #' @export
+as.list.distribution <- function(x, ...) {
+  x <- as_data_frame_parameters(x, ...)
+  as.list(x)
+}
+
+#' @export
 c.distribution <- function(...) {
   x <- list(...)
   cl <- class(x[[1L]])
@@ -576,3 +542,22 @@ summary.distribution <- function(object, ...) {
   class(object) <- "data.frame"
   summary(object, ...)
 }
+
+make_suffix <- function(x, digits = 3) {
+  rval <- sapply(x, format, digits = digits)
+  nok <- duplicated(rval)
+  while(any(nok) && digits < 10) {
+    digits <- digits + 1
+    rval[nok] <- sapply(x[nok], format, digits = digits)
+    nok <- duplicated(rval)
+  }
+  nok <- duplicated(rval) | duplicated(rval, fromLast = TRUE)
+  if(any(nok)) rval[nok] <- make.unique(rval[nok], sep = "_") 
+  return(rval)
+}
+
+make_support <- function(min, max, drop = TRUE) {
+  rval <- cbind(min = min, max = max)
+  if(drop && NROW(rval) == 1L) rval[1L, ] else rval 
+}
+

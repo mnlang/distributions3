@@ -209,7 +209,7 @@ kurtosis.Normal <- function(x, ...) {
 #'
 random.Normal <- function(x, n = 1L, drop = TRUE, ...) {
   FUN <- function(at, d) rnorm(n = length(d), mean = d$mu, sd = d$sigma)
-  apply_dpqr(d = x, FUN = FUN, at = rep.int(1, n), type = "random", drop = drop)
+  apply_dpqr(d = x, FUN = FUN, at = rep.int(1, n), type_prefix = "r", drop = drop)
 } 
 
 #' Evaluate the probability mass function of a Normal distribution
@@ -235,7 +235,7 @@ random.Normal <- function(x, n = 1L, drop = TRUE, ...) {
 pdf.Normal <- function(d, x, drop = TRUE, ...) {
 
   FUN <- function(at, d) dnorm(x = at, mean = d$mu, sd = d$sigma)
-  apply_dpqr(d = d, FUN = FUN, at = x, type = "pdf", drop = drop)
+  apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "d", drop = drop)
 
 }
 
@@ -245,7 +245,7 @@ pdf.Normal <- function(d, x, drop = TRUE, ...) {
 log_pdf.Normal <- function(d, x, drop = TRUE, ...) {
 
   FUN <- function(at, d) dnorm(x = at, mean = d$mu, sd = d$sigma, log = TRUE)
-  apply_dpqr(d = d, FUN = FUN, at = x, type = "log_pdf", drop = drop)
+  apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "l", drop = drop)
 
 }
 
@@ -267,7 +267,7 @@ log_pdf.Normal <- function(d, x, drop = TRUE, ...) {
 #'
 cdf.Normal <- function(d, x, drop = TRUE, ...) {
   FUN <- function(at, d) pnorm(q = at, mean = d$mu, sd = d$sigma)
-  apply_dpqr(d = d, FUN = FUN, at = x, type = "cdf", drop = drop)
+  apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "p", drop = drop)
 }
 
 #' Determine quantiles of a Normal distribution
@@ -299,7 +299,7 @@ quantile.Normal <- function(x, probs, drop = TRUE, ...) {
   ellipsis::check_dots_used()
   
   FUN <- function(at, d) qnorm(at, mean = d$mu, sd = d$sigma)
-  apply_dpqr(d = x, FUN = FUN, at = probs, type = "quantile", drop = drop)
+  apply_dpqr(d = x, FUN = FUN, at = probs, type_prefix = "q", drop = drop)
 }
 
 #' Fit a Normal distribution to data
@@ -344,7 +344,7 @@ suff_stat.Normal <- function(d, x, ...) {
 #' @return A vector of length 2 with the minimum and maximum value of the support.
 #'
 #' @export
-support.Normal <- function(d, drop = TRUE){
+support.Normal <- function(d, drop = TRUE) {
 
   if(!is_distribution(d)){
     message("d has to be a disitrubtion")
@@ -353,16 +353,8 @@ support.Normal <- function(d, drop = TRUE){
 
   stopifnot(is.logical(drop))
 
-  rval <- matrix(
-    rep(c(-Inf, Inf), length(d)),
-    byrow = TRUE,
-    ncol = 2,
-    dimnames = list(NULL, c("lb", "ub"))
-  ) 
+  min <- rep(-Inf, length(d))
+  max <- rep(Inf, length(d))
 
-  if (NROW(rval) == 1 && drop) {
-    unname(drop(rval))
-  } else {
-    rval
-  }
+  make_support(min, max, drop = drop)
 }
