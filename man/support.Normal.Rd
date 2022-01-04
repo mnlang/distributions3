@@ -9,7 +9,7 @@
 \arguments{
 \item{d}{An \code{Normal} object created by a call to \code{\link[=Normal]{Normal()}}.}
 
-\item{drop}{logical. Shoul the result be simplified to a vector if possible?}
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
 }
 \value{
 A vector of length 2 with the minimum and maximum value of the support.

@@ -11,7 +11,7 @@
 
 \item{probs}{A vector of probabilites.}
 
-\item{drop}{logical. Shoul the result be simplified to a vector if possible?}
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}

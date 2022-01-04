@@ -4,12 +4,14 @@
 \alias{quantile.Gamma}
 \title{Determine quantiles of a Gamma distribution}
 \usage{
-\method{quantile}{Gamma}(x, probs, ...)
+\method{quantile}{Gamma}(x, probs, drop = TRUE, ...)
 }
 \arguments{
 \item{x}{A \code{Gamma} object created by a call to \code{\link[=Gamma]{Gamma()}}.}
 
 \item{probs}{A vector of probabilites.}
+
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}

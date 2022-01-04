@@ -4,12 +4,14 @@
 \alias{quantile.Binomial}
 \title{Determine quantiles of a Binomial distribution}
 \usage{
-\method{quantile}{Binomial}(x, probs, ...)
+\method{quantile}{Binomial}(x, probs, drop = TRUE, ...)
 }
 \arguments{
 \item{x}{A \code{Binomial} object created by a call to \code{\link[=Binomial]{Binomial()}}.}
 
 \item{probs}{A vector of probabilites.}
+
+\item{drop}{logical. Shoul the result be simplified to a vector if possible?}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}
