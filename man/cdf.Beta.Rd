@@ -4,13 +4,15 @@
 \alias{cdf.Beta}
 \title{Evaluate the cumulative distribution function of a Beta distribution}
 \usage{
-\method{cdf}{Beta}(d, x, ...)
+\method{cdf}{Beta}(d, x, drop = TRUE, ...)
 }
 \arguments{
 \item{d}{A \code{Beta} object created by a call to \code{\link[=Beta]{Beta()}}.}
 
 \item{x}{A vector of elements whose cumulative probabilities you would
 like to determine given the distribution \code{d}.}
+
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}

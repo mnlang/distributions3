@@ -4,12 +4,14 @@
 \alias{quantile.ChiSquare}
 \title{Determine quantiles of a chi square distribution}
 \usage{
-\method{quantile}{ChiSquare}(x, probs, ...)
+\method{quantile}{ChiSquare}(x, probs, drop = TRUE, ...)
 }
 \arguments{
 \item{x}{A \code{ChiSquare} object created by a call to \code{\link[=ChiSquare]{ChiSquare()}}.}
 
 \item{probs}{A vector of probabilites.}
+
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}

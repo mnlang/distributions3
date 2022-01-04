@@ -233,20 +233,16 @@ random.Normal <- function(x, n = 1L, drop = TRUE, ...) {
 #' @export
 #'
 pdf.Normal <- function(d, x, drop = TRUE, ...) {
-
   FUN <- function(at, d) dnorm(x = at, mean = d$mu, sd = d$sigma)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "d", drop = drop)
-
 }
 
 #' @rdname pdf.Normal
 #' @export
 #'
 log_pdf.Normal <- function(d, x, drop = TRUE, ...) {
-
   FUN <- function(at, d) dnorm(x = at, mean = d$mu, sd = d$sigma, log = TRUE)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "l", drop = drop)
-
 }
 
 #' Evaluate the cumulative distribution function of a Normal distribution

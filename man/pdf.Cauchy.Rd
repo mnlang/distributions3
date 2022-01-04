@@ -5,15 +5,17 @@
 \alias{log_pdf.Cauchy}
 \title{Evaluate the probability mass function of a Cauchy distribution}
 \usage{
-\method{pdf}{Cauchy}(d, x, ...)
+\method{pdf}{Cauchy}(d, x, drop = TRUE, ...)
 
-\method{log_pdf}{Cauchy}(d, x, ...)
+\method{log_pdf}{Cauchy}(d, x, drop = TRUE, ...)
 }
 \arguments{
 \item{d}{A \code{Cauchy} object created by a call to \code{\link[=Cauchy]{Cauchy()}}.}
 
 \item{x}{A vector of elements whose probabilities you would like to
 determine given the distribution \code{d}.}
+
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}
