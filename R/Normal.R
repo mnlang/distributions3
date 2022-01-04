@@ -346,11 +346,7 @@ suff_stat.Normal <- function(d, x, ...) {
 #' @export
 support.Normal <- function(d, drop = TRUE) {
 
-  if(!is_distribution(d)){
-    message("d has to be a disitrubtion")
-    stop()
-  }
-
+  stopifnot("d must be a supported distribution object" = is_distribution(d))
   stopifnot(is.logical(drop))
 
   min <- rep(-Inf, length(d))

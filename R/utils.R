@@ -502,7 +502,7 @@ as_data_frame_column <- function(x, ...) {
   d <- data.frame(x = seq_along(x))
   rownames(d) <- names(x)
   d$x <- x
-  names(d) <- deparse(substitute(x)) ## FIXME preserve name in data.frame(foo = n)
+  names(d) <- deparse(substitute(x)) ## FIXME: preserve name in data.frame(foo = n)
   return(d)
 }
 
@@ -510,6 +510,7 @@ as_data_frame_column <- function(x, ...) {
 
 #' @export
 as.data.frame.distribution <- as_data_frame_column
+## FIXME: implement test in `test-utils.R`
 
 #' @export
 as.matrix.distribution <- function(x, ...) {
@@ -558,6 +559,6 @@ make_suffix <- function(x, digits = 3) {
 
 make_support <- function(min, max, drop = TRUE) {
   rval <- cbind(min = min, max = max)
-  if(drop && NROW(rval) == 1L) rval[1L, ] else rval 
+  if (drop && NROW(rval) == 1L) unname(rval[1L, ]) else rval 
 }
 
