@@ -490,6 +490,33 @@ names.distribution <- function(x) {
   return(x)
 }
 
+
+#' Return parameter names of a distribution object?
+#'
+#' `parameter_names` returns the parameter names of a `"distribution"` object.
+#'
+#' @param x An distrubtion object.
+#'
+#' @export
+#'
+#' @examples
+#'
+#' Z <- Normal()
+#'
+#' parameter_names(Z)
+#' @export
+parameter_names <- function(x) {
+  ## FIXME: Should we provide that function?
+  stopifnot(is_distribution(x))
+  UseMethod("parameter_names")
+}
+
+#' @export
+parameter_names.distribution <- function(x) {
+  colnames(as.matrix(x))
+}
+
+
 ## FIXME: What should as.data.frame produce?
 ## (a) Data frame of parameters
 as_data_frame_parameters <- function(x, ...) {

@@ -108,18 +108,18 @@ plot.distribution <- function(x, cdf = FALSE, p = c(0.1, 99.9), len = 1000,
   x_is_discrete <- distn %in% discrete
   # The number of parameters and their names
   np <- length(x)
-  par_names <- names(x)
+  par_names <- parameter_names(x)
   # Expands the vector(s) of parameters to create a parameter combination for
   # each function to be plotted.
-  par_lengths <- sapply(x, length)
   if (all) {
-    n_distns <- prod(par_lengths)
-    xx <- as.list(expand.grid(x, KEEP.OUT.ATTRS = FALSE))
+    xx <- expand.grid(as.data.frame(as.matrix(x)), KEEP.OUT.ATTRS = FALSE)
+    xx <- unique(xx)
+    class(xx) <- class(x)
+    n_distns <- length(xx)
   } else {
-    n_distns <- max(par_lengths)
-    xx <- lapply(x, rep_len, n_distns)
+    xx <- x
+    n_distns <- length(xx)
   }
-  class(xx) <- class(x)
   # Create a title for the plot
   # If n_distns = 1 then place the parameter values in the title
   # If n_distns > 1 then place the parameter values in the legend
