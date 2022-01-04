@@ -58,7 +58,7 @@ test_that("quantile.ChiSquare work correctly", {
   expect_length(quantile(cs, c(0, 1)), 2)
 })
 
-test_that("{moments}.Normal work correctly", {
+test_that("{moments}.ChiSquare work correctly", {
   df <- 5
   cs <- ChiSquare(5)
 
@@ -68,7 +68,7 @@ test_that("{moments}.Normal work correctly", {
   expect_equal(kurtosis(cs), 12 / df)
 })
 
-test_that("vectorization of a Normal distribution work correctly", {
+test_that("vectorization of a ChiSquare distribution work correctly", {
   d <- ChiSquare(c(1, 5))
   d1 <- d[1]
   d2 <- d[2]

@@ -71,7 +71,7 @@ test_that("quantile.FisherF work correctly", {
   expect_length(quantile(s, c(0, 1)), 2)
 })
 
-test_that("vectorization of a Normal distribution work correctly", {
+test_that("vectorization of a FisherF distribution work correctly", {
   d <- FisherF(c(5, 10), c(5, 10))
   d1 <- d[1]
   d2 <- d[2]

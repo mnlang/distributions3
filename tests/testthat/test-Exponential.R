@@ -77,7 +77,7 @@ test_that("{moments}.Exponential work correctly", {
   expect_equal(kurtosis(e), 6)
 })
 
-test_that("vectorization of a Normal distribution work correctly", {
+test_that("vectorization of a Exponential distribution work correctly", {
   d <- Exponential(c(1, 2))
   d1 <- d[1]
   d2 <- d[2]
