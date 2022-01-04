@@ -256,7 +256,7 @@ log_pdf.Normal <- function(d, x, drop = TRUE, ...) {
 #' @param d A `Normal` object created by a call to [Normal()].
 #' @param x A vector of elements whose cumulative probabilities you would
 #'   like to determine given the distribution `d`.
-#' @param drop logical. Shoul the result be simplified to a vector if possible?
+#' @param drop logical. Should the result be simplified to a vector if possible?
 #' @param ... Unused. Unevaluated arguments will generate a warning to
 #'   catch mispellings or other possible errors.
 #'
@@ -286,7 +286,7 @@ cdf.Normal <- function(d, x, drop = TRUE, ...) {
 #' @inheritParams random.Normal
 #'
 #' @param probs A vector of probabilites.
-#' @param drop logical. Shoul the result be simplified to a vector if possible?
+#' @param drop logical. Should the result be simplified to a vector if possible?
 #' @param ... Unused. Unevaluated arguments will generate a warning to
 #'   catch mispellings or other possible errors.
 #'
@@ -339,7 +339,7 @@ suff_stat.Normal <- function(d, x, ...) {
 #' Return the support of the Normal distribution
 #'
 #' @param d An `Normal` object created by a call to [Normal()].
-#' @param drop logical. Shoul the result be simplified to a vector if possible?
+#' @param drop logical. Should the result be simplified to a vector if possible?
 #'
 #' @return A vector of length 2 with the minimum and maximum value of the support.
 #'
