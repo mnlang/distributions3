@@ -5,15 +5,17 @@
 \alias{log_pdf.Frechet}
 \title{Evaluate the probability mass function of a Frechet distribution}
 \usage{
-\method{pdf}{Frechet}(d, x, ...)
+\method{pdf}{Frechet}(d, x, drop = TRUE, ...)
 
-\method{log_pdf}{Frechet}(d, x, ...)
+\method{log_pdf}{Frechet}(d, x, drop = TRUE, ...)
 }
 \arguments{
 \item{d}{A \code{Frechet} object created by a call to \code{\link[=Frechet]{Frechet()}}.}
 
 \item{x}{A vector of elements whose probabilities you would like to
 determine given the distribution \code{d}.}
+
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}

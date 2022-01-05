@@ -33,14 +33,17 @@
 #' cdf(X, quantile(X, 0.7))
 #' quantile(X, cdf(X, 7))
 Erlang <- function(k, lambda) {
-  d <- list(k = k, lambda = lambda)
+  stopifnot(
+    "parameter lengths do not match (only scalars are allowed to be recycled)" =
+    length(k) == length(lambda) | length(k) == 1 | length(lambda) == 1
+  )
+  d <- data.frame(k = k, lambda = lambda)
   class(d) <- c("Erlang", "distribution")
   d
 }
 
-#' @export
-print.Erlang <- function(x, ...) {
-  cat(glue("Erlang distribution (k = {x$k}, lambda = {x$lambda})\n"))
+rerlang <- function(n, k, lambda) {
+  -1/lambda * colSums(log(matrix(runif(n = n * k), ncol = n)))
 }
 
 #' Draw a random sample from an Erlang distribution
@@ -49,16 +52,16 @@ print.Erlang <- function(x, ...) {
 #'
 #' @param x An `Erlang` object created by a call to [Erlang()].
 #' @param n The number of samples to draw. Defaults to `1L`.
+#' @param drop logical. Should the result be simplified to a vector if possible?
 #' @param ... Unused. Unevaluated arguments will generate a warning to
 #'   catch mispellings or other possible errors.
 #'
 #' @return A numeric vector of length `n`.
 #' @export
 #'
-random.Erlang <- function(x, n = 1L, ...) {
-  replicate(n = n, expr = {
-    -1 / x$lambda * log(prod(runif(n = x$k)))
-  })
+random.Erlang <- function(x, n = 1L, drop = TRUE, ...) {
+  FUN <- function(at, d) rerlang(n = length(d), k = d$k, lambda = d$lambda)
+  apply_dpqr(d = x, FUN = FUN, at = rep.int(1, n), type_prefix = "r", drop = drop)
 }
 
 #' Evaluate the probability mass function of an Erlang distribution
@@ -76,7 +79,7 @@ random.Erlang <- function(x, n = 1L, ...) {
 #'
 pdf.Erlang <- function(d, x, ...) {
   if (any(x < 0)) stop("'x' must be non-negative", call. = FALSE)
-  (d$lambda^d$k) * (x^(d$k - 1)) * exp(-d$lambda * x) / factorial(d$k - 1)
+  exp(log_pdf.Erlang(d, x, ...))
 }
 
 #' @rdname pdf.Erlang
@@ -84,7 +87,7 @@ pdf.Erlang <- function(d, x, ...) {
 #'
 log_pdf.Erlang <- function(d, x, ...) {
   if (any(x < 0)) stop("'x' must be non-negative", call. = FALSE)
-  d$k * log(d$lambda) + (d$k - 1) * log(x) - d$lambda * x - log(factorial(d$k - 1))
+  d$k * log(d$lambda) + (d$k - 1) * log(x) - d$lambda * x - lgamma(d$k)
 }
 
 #' Evaluate the cumulative distribution function of an Erlang distribution
@@ -142,8 +145,9 @@ quantile.Erlang <- function(x, probs, ..., interval = c(0, 1e6), tol = .Machine$
 #' Return the support of the Erlang distribution
 #'
 #' @param d An `Erlang` object created by a call to [Erlang()].
+#' @param drop logical. Should the result be simplified to a vector if possible?
 #'
 #' @return A vector of length 2 with the minimum and maximum value of the support.
 #'
 #' @export
-support.Erlang <- function(d) c(0, Inf)
+support.Erlang <- function(d, drop = TRUE) c(0, Inf)

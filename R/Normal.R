@@ -262,7 +262,7 @@ log_pdf.Normal <- function(d, x, drop = TRUE, ...) {
 #' @export
 #'
 cdf.Normal <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) pnorm(q = at, mean = d$mu, sd = d$sigma)
+  FUN <- function(at, d) pnorm(q = at, mean = d$mu, sd = d$sigma, ...)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "p", drop = drop)
 }
 

@@ -5,15 +5,17 @@
 \alias{log_pdf.Poisson}
 \title{Evaluate the probability mass function of a Poisson distribution}
 \usage{
-\method{pdf}{Poisson}(d, x, ...)
+\method{pdf}{Poisson}(d, x, drop = TRUE, ...)
 
-\method{log_pdf}{Poisson}(d, x, ...)
+\method{log_pdf}{Poisson}(d, x, drop = TRUE, ...)
 }
 \arguments{
 \item{d}{A \code{Poisson} object created by a call to \code{\link[=Poisson]{Poisson()}}.}
 
 \item{x}{A vector of elements whose probabilities you would like to
 determine given the distribution \code{d}.}
+
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}

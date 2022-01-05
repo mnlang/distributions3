@@ -108,7 +108,7 @@ plot.distribution <- function(x, cdf = FALSE, p = c(0.1, 99.9), len = 1000,
   x_is_discrete <- distn %in% discrete
   # The number of parameters and their names
   np <- length(x)
-  par_names <- parameter_names(x)
+  par_names <- colnames(x)
   # Expands the vector(s) of parameters to create a parameter combination for
   # each function to be plotted.
   if (all) {

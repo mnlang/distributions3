@@ -4,12 +4,14 @@
 \alias{quantile.StudentsT}
 \title{Determine quantiles of a StudentsT distribution}
 \usage{
-\method{quantile}{StudentsT}(x, probs, ...)
+\method{quantile}{StudentsT}(x, probs, drop = TRUE, ...)
 }
 \arguments{
 \item{x}{A \code{StudentsT} object created by a call to \code{\link[=StudentsT]{StudentsT()}}.}
 
 \item{probs}{A vector of probabilites.}
+
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}

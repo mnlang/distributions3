@@ -4,7 +4,6 @@ test_that("print.Normal works", {
   expect_output(print(Normal()), regexp = "Normal distribution")
 })
 
-
 test_that("suff_stat.Normal works correctly", {
   ss <- list(mu = 0, sigma = 0, samples = 2)
   expect_equal(suff_stat(Normal(), c(0, 0)), ss)
@@ -24,7 +23,6 @@ test_that("random.Normal work correctly", {
   expect_length(random(n, 0), 0)
   expect_error(random(n, -2))
 })
-
 
 test_that("pdf.Normal work correctly", {
   n <- Normal()
@@ -47,7 +45,6 @@ test_that("log_pdf.Normal work correctly", {
   expect_length(log_pdf(n, seq_len(1)), 1)
   expect_length(log_pdf(n, seq_len(10)), 10)
 })
-
 
 test_that("cdf.Normal work correctly", {
   n <- Normal()
@@ -79,8 +76,6 @@ test_that("{moments}.Normal work correctly", {
   expect_equal(skewness(n), 0)
   expect_equal(kurtosis(n), 0)
 })
-
-  
 
 test_that("vectorization of a Normal distribution work correctly", {
   d <- Normal(c(0, 10), c(1, 1))

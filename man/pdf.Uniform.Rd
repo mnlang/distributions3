@@ -5,15 +5,17 @@
 \alias{log_pdf.Uniform}
 \title{Evaluate the probability mass function of a continuous Uniform distribution}
 \usage{
-\method{pdf}{Uniform}(d, x, ...)
+\method{pdf}{Uniform}(d, x, drop = TRUE, ...)
 
-\method{log_pdf}{Uniform}(d, x, ...)
+\method{log_pdf}{Uniform}(d, x, drop = TRUE, ...)
 }
 \arguments{
 \item{d}{A \code{Uniform} object created by a call to \code{\link[=Uniform]{Uniform()}}.}
 
 \item{x}{A vector of elements whose probabilities you would like to
 determine given the distribution \code{d}.}
+
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}

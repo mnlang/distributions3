@@ -5,15 +5,17 @@
 \alias{log_pdf.Gumbel}
 \title{Evaluate the probability mass function of a Gumbel distribution}
 \usage{
-\method{pdf}{Gumbel}(d, x, ...)
+\method{pdf}{Gumbel}(d, x, drop = TRUE, ...)
 
-\method{log_pdf}{Gumbel}(d, x, ...)
+\method{log_pdf}{Gumbel}(d, x, drop = TRUE, ...)
 }
 \arguments{
 \item{d}{A \code{Gumbel} object created by a call to \code{\link[=Gumbel]{Gumbel()}}.}
 
 \item{x}{A vector of elements whose probabilities you would like to
 determine given the distribution \code{d}.}
+
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}

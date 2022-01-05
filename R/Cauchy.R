@@ -87,17 +87,17 @@ Cauchy <- function(location = 0, scale = 1) {
 #' @export
 mean.Cauchy <- function(x, ...) {
   ellipsis::check_dots_used()
-  rep.int(NaN, length(x))
+  rep(NaN, length(x))
 }
 
 #' @export
-variance.Cauchy <- function(x, ...) rep.int(NaN, length(x))
+variance.Cauchy <- function(x, ...) rep(NaN, length(x))
 
 #' @export
-skewness.Cauchy <- function(x, ...) rep.int(NaN, length(x))
+skewness.Cauchy <- function(x, ...) rep(NaN, length(x))
 
 #' @export
-kurtosis.Cauchy <- function(x, ...) rep.int(NaN, length(x))
+kurtosis.Cauchy <- function(x, ...) rep(NaN, length(x))
 
 #' Draw a random sample from a Cauchy distribution
 #'

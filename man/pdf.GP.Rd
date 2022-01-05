@@ -5,15 +5,17 @@
 \alias{log_pdf.GP}
 \title{Evaluate the probability mass function of a GP distribution}
 \usage{
-\method{pdf}{GP}(d, x, ...)
+\method{pdf}{GP}(d, x, drop = TRUE, ...)
 
-\method{log_pdf}{GP}(d, x, ...)
+\method{log_pdf}{GP}(d, x, drop = TRUE, ...)
 }
 \arguments{
 \item{d}{A \code{GP} object created by a call to \code{\link[=GP]{GP()}}.}
 
 \item{x}{A vector of elements whose probabilities you would like to
 determine given the distribution \code{d}.}
+
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}

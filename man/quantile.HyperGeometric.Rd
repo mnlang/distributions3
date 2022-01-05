@@ -4,15 +4,17 @@
 \alias{quantile.HyperGeometric}
 \title{Determine quantiles of a HyperGeometric distribution}
 \usage{
-\method{quantile}{HyperGeometric}(x, probs, ...)
+\method{quantile}{HyperGeometric}(x, probs, drop = TRUE, ...)
 }
 \arguments{
 \item{x}{A \code{HyperGeometric} object created by a call to \code{\link[=HyperGeometric]{HyperGeometric()}}.}
 
 \item{probs}{A vector of probabilites.}
 
-\item{...}{Unused. Unevaluated arguments will generate a warning to
+\item{drop}{logical. Should the result be simplified to a vector if possible?
 catch mispellings or other possible errors.}
+
+\item{...}{Unused. Unevaluated arguments will generate a warning to}
 }
 \value{
 A vector of quantiles, one for each element of \code{probs}.

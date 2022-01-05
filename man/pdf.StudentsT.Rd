@@ -5,15 +5,17 @@
 \alias{log_pdf.StudentsT}
 \title{Evaluate the probability mass function of a StudentsT distribution}
 \usage{
-\method{pdf}{StudentsT}(d, x, ...)
+\method{pdf}{StudentsT}(d, x, drop = TRUE, ...)
 
-\method{log_pdf}{StudentsT}(d, x, ...)
+\method{log_pdf}{StudentsT}(d, x, drop = TRUE, ...)
 }
 \arguments{
 \item{d}{A \code{StudentsT} object created by a call to \code{\link[=StudentsT]{StudentsT()}}.}
 
 \item{x}{A vector of elements whose probabilities you would like to
 determine given the distribution \code{d}.}
+
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}

@@ -5,15 +5,17 @@
 \alias{log_pdf.GEV}
 \title{Evaluate the probability mass function of a GEV distribution}
 \usage{
-\method{pdf}{GEV}(d, x, ...)
+\method{pdf}{GEV}(d, x, drop = TRUE, ...)
 
-\method{log_pdf}{GEV}(d, x, ...)
+\method{log_pdf}{GEV}(d, x, drop = TRUE, ...)
 }
 \arguments{
 \item{d}{A \code{GEV} object created by a call to \code{\link[=GEV]{GEV()}}.}
 
 \item{x}{A vector of elements whose probabilities you would like to
 determine given the distribution \code{d}.}
+
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}

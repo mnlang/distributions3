@@ -463,9 +463,9 @@ length.distribution <- function(x) length(unclass(x)[[1L]])
 format.distribution <- function(x, digits = getOption("digits") - 3L, ...) {
   cl <- class(x)[1L]
   n <- names(x)
-  if(is.null(attr(x, "row.names"))) attr(x, "row.names") <- 1L:length(x) ## FIXME: should always be part of the object, see Nrml()
+  if(is.null(attr(x, "row.names"))) attr(x, "row.names") <- 1L:length(x)
   class(x) <- "data.frame"
-  f <- sprintf("%s distribution (%s)", cl, apply(as.matrix(x), 1L, function(p) paste(names(x), "=", format(as.vector(p), digits = digits, ...), collapse = ", ")))
+  f <- sprintf("%s distribution (%s)", cl, apply(rbind(apply(as.matrix(x), 2L, format, digits = digits, ...)), 1L, function(p) paste(names(x), "=", as.vector(p), collapse = ", ")))
   setNames(f, n)
 }
 
@@ -490,34 +490,14 @@ names.distribution <- function(x) {
   return(x)
 }
 
-
-#' Return parameter names of a distribution object?
-#'
-#' `parameter_names` returns the parameter names of a `"distribution"` object.
-#'
-#' @param x An distrubtion object.
-#'
 #' @export
-#'
-#' @examples
-#'
-#' Z <- Normal()
-#'
-#' parameter_names(Z)
-#' @export
-parameter_names <- function(x) {
-  ## FIXME: Should we provide that function?
-  stopifnot(is_distribution(x))
-  UseMethod("parameter_names")
+dimnames.distribution <- function(x) {
+  list(
+    attr(x, "rownames"),
+    names(unclass(x))
+  )
 }
 
-#' @export
-parameter_names.distribution <- function(x) {
-  colnames(as.matrix(x))
-}
-
-
-## FIXME: What should as.data.frame produce?
 ## (a) Data frame of parameters
 as_data_frame_parameters <- function(x, ...) {
   class(x) <- "data.frame"
@@ -533,11 +513,10 @@ as_data_frame_column <- function(x, ...) {
   return(d)
 }
 
-## currently go with (b) and use (a) in as.matrix
+## Convention: "as.data.frame" uses version (b) and "as.matrix" uses version (a)
 
 #' @export
 as.data.frame.distribution <- as_data_frame_column
-## FIXME: implement test in `test-utils.R`
 
 #' @export
 as.matrix.distribution <- function(x, ...) {

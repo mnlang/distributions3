@@ -41,6 +41,7 @@ FisherF <- function(df1, df2, lambda = 0) {
   stopifnot(
     "parameter lengths do not match (only scalars are allowed to be recycled)" =
     length(df1) == length(df2) & length(df1) == length(lambda) | 
+    sum(c(length(df1) == 1, length(df2) == 1, length(lambda) == 1)) >= 2 |
     length(df1) == length(df2) & length(lambda) == 1 | 
     length(df1) == length(lambda) & length(df2) == 1 | 
     length(df2) == length(lambda) & length(df1) == 1

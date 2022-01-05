@@ -4,13 +4,15 @@
 \alias{quantile.Tukey}
 \title{Determine quantiles of a Tukey distribution}
 \usage{
-\method{quantile}{Tukey}(x, probs, ...)
+\method{quantile}{Tukey}(x, probs, drop = TRUE, ...)
 }
 \arguments{
 \item{x}{A vector of elements whose cumulative probabilities you would
 like to determine given the distribution \code{d}.}
 
 \item{probs}{A vector of probabilites.}
+
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}
