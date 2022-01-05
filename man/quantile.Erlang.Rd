@@ -4,19 +4,17 @@
 \alias{quantile.Erlang}
 \title{Determine quantiles of an Erlang distribution}
 \usage{
-\method{quantile}{Erlang}(x, probs, ..., interval = c(0, 1e+06), tol = .Machine$double.eps)
+\method{quantile}{Erlang}(x, probs, drop = TRUE, ...)
 }
 \arguments{
 \item{x}{An \code{Erlang} object created by a call to \code{\link[=Erlang]{Erlang()}}.}
 
 \item{probs}{A vector of probabilites.}
 
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
+
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}
-
-\item{interval}{Interval being used to search for the quantile using numerical root finding. Defaults to (0, 1e6)}
-
-\item{tol}{Tolerance of the root finding algorithm. Defaults to \code{.Machine$double.eps}}
 }
 \value{
 A vector of quantiles, one for each element of \code{probs}.

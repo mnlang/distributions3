@@ -14,6 +14,8 @@ like to determine given the distribution \code{d}.}
 
 \item{...}{Unused. Unevaluated arguments will generate a warning to
 catch mispellings or other possible errors.}
+
+\item{drop}{logical. Should the result be simplified to a vector if possible?}
 }
 \value{
 A vector of probabilities, one for each element of \code{x}.
