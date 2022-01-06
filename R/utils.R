@@ -625,7 +625,7 @@ as_data_frame_column <- function(x, ...) {
   d <- data.frame(x = seq_along(x))
   rownames(d) <- names(x)
   d$x <- x
-  names(d) <- deparse(substitute(x)) ## FIXME: preserve name in data.frame(foo = n)
+  names(d) <- deparse(substitute(x))
   return(d)
 }
 

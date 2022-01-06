@@ -113,7 +113,6 @@ kurtosis.FisherF <- function(x, ...) {
 #' @export
 #'
 random.FisherF <- function(x, n = 1L, drop = TRUE, ...) {
-  ## FIXME: Test fails, check again if all correct
   FUN <- function(at, d) rf(n = length(d), df1 = d$df1, df2 = d$df2, ncp = d$lambda)
   apply_dpqr(d = x, FUN = FUN, at = rep.int(1, n), type_prefix = "r", drop = drop)
 }
