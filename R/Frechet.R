@@ -180,8 +180,9 @@ random.Frechet <- function(x, n = 1L, drop = TRUE, ...) {
 #' @param x A vector of elements whose probabilities you would like to
 #'   determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[revdbayes]{dgev}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of probabilities, one for each element of `x`.
 #' @export
@@ -192,7 +193,7 @@ pdf.Frechet <- function(d, x, drop = TRUE, ...) {
     loc <- d$location + d$scale
     scale <- d$scale / d$shape
     shape <- 1 / d$shape
-    revdbayes::dgev(x = at, loc = loc, scale = scale, shape = shape)
+    revdbayes::dgev(x = at, loc = loc, scale = scale, shape = shape, ...)
   }
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "d", drop = drop)
 }
@@ -219,8 +220,9 @@ log_pdf.Frechet <- function(d, x, drop = TRUE, ...) {
 #' @param x A vector of elements whose cumulative probabilities you would
 #'   like to determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[revdbayes]{pgev}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of probabilities, one for each element of `x`.
 #' @export
@@ -231,7 +233,7 @@ cdf.Frechet <- function(d, x, drop = TRUE, ...) {
     loc <- d$location + d$scale
     scale <- d$scale / d$shape
     shape <- 1 / d$shape
-    revdbayes::pgev(q = at, loc = loc, scale = scale, shape = shape)
+    revdbayes::pgev(q = at, loc = loc, scale = scale, shape = shape, ...)
   }
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "p", drop = drop)
 }
@@ -245,8 +247,9 @@ cdf.Frechet <- function(d, x, drop = TRUE, ...) {
 #'
 #' @param probs A vector of probabilities.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[revdbayes]{qgev}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of quantiles, one for each element of `probs`.
 #' @export
@@ -258,7 +261,7 @@ quantile.Frechet <- function(x, probs, drop = TRUE, ...) {
     loc <- x$location + x$scale
     scale <- x$scale / x$shape
     shape <- 1 / x$shape
-    revdbayes::qgev(p = at, loc = loc, scale = scale, shape = shape)
+    revdbayes::qgev(p = at, loc = loc, scale = scale, shape = shape, ...)
   }
   apply_dpqr(d = x, FUN = FUN, at = probs, type_prefix = "q", drop = drop)
 }

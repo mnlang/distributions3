@@ -57,8 +57,9 @@ Tukey <- function(nmeans, df, nranges) {
 #' @param x A vector of elements whose cumulative probabilities you would
 #'   like to determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{ptukey}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @family Tukey distribution
 #'
@@ -66,7 +67,7 @@ Tukey <- function(nmeans, df, nranges) {
 #' @export
 #'
 cdf.Tukey <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) ptukey(q = at, nmeans = d$nmeans, df = d$df, nranges = d$nranges)
+  FUN <- function(at, d) ptukey(q = at, nmeans = d$nmeans, df = d$df, nranges = d$nranges, ...)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "p", drop = drop)
 }
 
@@ -77,8 +78,9 @@ cdf.Tukey <- function(d, x, drop = TRUE, ...) {
 #'
 #' @param probs A vector of probabilites.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{qtukey}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of quantiles, one for each element of `probs`.
 #' @export
@@ -87,7 +89,7 @@ cdf.Tukey <- function(d, x, drop = TRUE, ...) {
 #'
 quantile.Tukey <- function(x, probs, drop = TRUE, ...) {
   ellipsis::check_dots_used()
-  FUN <- function(at, d) qtukey(p = at, nmeans = x$nmeans, df = x$df, nranges = x$nranges)
+  FUN <- function(at, d) qtukey(p = at, nmeans = x$nmeans, df = x$df, nranges = x$nranges, ...)
   apply_dpqr(d = x, FUN = FUN, at = probs, type_prefix = "q", drop = drop)
 }
 

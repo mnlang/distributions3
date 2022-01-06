@@ -141,14 +141,15 @@ random.ChiSquare <- function(x, n = 1L, drop = TRUE, ...) {
 #' @param x A vector of elements whose probabilities you would like to
 #'   determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{dchisq}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of probabilities, one for each element of `x`.
 #' @export
 #'
 pdf.ChiSquare <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) dchisq(x = at, df = d$df)
+  FUN <- function(at, d) dchisq(x = at, df = d$df, ...)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "d", drop = drop)
 }
 
@@ -168,14 +169,15 @@ log_pdf.ChiSquare <- function(d, x, drop = TRUE, ...) {
 #' @param x A vector of elements whose cumulative probabilities you would
 #'   like to determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{pchisq}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of probabilities, one for each element of `x`.
 #' @export
 #'
 cdf.ChiSquare <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) pchisq(q = at, df = d$df)
+  FUN <- function(at, d) pchisq(q = at, df = d$df, ...)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "p", drop = drop)
 }
 
@@ -188,8 +190,9 @@ cdf.ChiSquare <- function(d, x, drop = TRUE, ...) {
 #'
 #' @param probs A vector of probabilites.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{qchisq}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of quantiles, one for each element of `probs`.
 #' @export
@@ -200,7 +203,7 @@ quantile.ChiSquare <- function(x, probs, drop = TRUE, ...) {
   # how quantiles are calculated
 
   ellipsis::check_dots_used()
-  FUN <- function(at, d) qchisq(at, df = x$df)
+  FUN <- function(at, d) qchisq(at, df = x$df, ...)
   apply_dpqr(d = x, FUN = FUN, at = probs, type_prefix = "q", drop = drop)
 }
 

@@ -117,14 +117,15 @@ random.Exponential <- function(x, n = 1L, drop = TRUE, ...) {
 #' @param x A vector of elements whose probabilities you would like to
 #'   determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{dexp}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of probabilities, one for each element of `x`.
 #' @export
 #'
 pdf.Exponential <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) dexp(x = at, rate = d$rate)
+  FUN <- function(at, d) dexp(x = at, rate = d$rate, ...)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "d", drop = drop)
 }
 
@@ -144,14 +145,15 @@ log_pdf.Exponential <- function(d, x, drop = TRUE, ...) {
 #' @param x A vector of elements whose cumulative probabilities you would
 #'   like to determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{pexp}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of probabilities, one for each element of `x`.
 #' @export
 #'
 cdf.Exponential <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) pexp(q = at, rate = d$rate)
+  FUN <- function(at, d) pexp(q = at, rate = d$rate, ...)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "p", drop = drop)
 }
 
@@ -164,15 +166,16 @@ cdf.Exponential <- function(d, x, drop = TRUE, ...) {
 #'
 #' @param probs A vector of probabilites.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{qexp}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of quantiles, one for each element of `probs`.
 #' @export
 #'
 quantile.Exponential <- function(x, probs, drop = TRUE, ...) {
   ellipsis::check_dots_used()
-  FUN <- function(at, d) qexp(at, rate = x$rate)
+  FUN <- function(at, d) qexp(at, rate = x$rate, ...)
   apply_dpqr(d = x, FUN = FUN, at = probs, type_prefix = "q", drop = drop)
 }
 

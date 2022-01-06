@@ -121,8 +121,9 @@ random.Geometric <- function(x, n = 1L, drop = TRUE, ...) {
 #' @param x A vector of elements whose probabilities you would like to
 #'   determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{dgeom}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @family Geometric distribution
 #'
@@ -130,7 +131,7 @@ random.Geometric <- function(x, n = 1L, drop = TRUE, ...) {
 #' @export
 #'
 pdf.Geometric <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) dgeom(x = at, prob = d$p)
+  FUN <- function(at, d) dgeom(x = at, prob = d$p, ...)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "d", drop = drop)
 }
 
@@ -150,8 +151,9 @@ log_pdf.Geometric <- function(d, x, drop = TRUE, ...) {
 #' @param x A vector of elements whose cumulative probabilities you would
 #'   like to determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{pgeom}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @family Geometric distribution
 #'
@@ -159,7 +161,7 @@ log_pdf.Geometric <- function(d, x, drop = TRUE, ...) {
 #' @export
 #'
 cdf.Geometric <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) pgeom(q = at, prob = d$p)
+  FUN <- function(at, d) pgeom(q = at, prob = d$p, ...)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "p", drop = drop)
 }
 
@@ -170,8 +172,9 @@ cdf.Geometric <- function(d, x, drop = TRUE, ...) {
 #'
 #' @param probs A vector of probabilites.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{qgeom}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of quantiles, one for each element of `probs`.
 #' @export
@@ -180,7 +183,7 @@ cdf.Geometric <- function(d, x, drop = TRUE, ...) {
 #'
 quantile.Geometric <- function(x, probs, drop = TRUE, ...) {
   ellipsis::check_dots_used()
-  FUN <- function(at, d) qgeom(p = at, prob = d$p)
+  FUN <- function(at, d) qgeom(p = at, prob = d$p, ...)
   apply_dpqr(d = x, FUN = FUN, at = probs, type_prefix = "q", drop = drop)
 }
 

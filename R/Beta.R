@@ -98,14 +98,15 @@ random.Beta <- function(x, n = 1L, drop = TRUE, ...) {
 #' @param x A vector of elements whose probabilities you would like to
 #'   determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{dbeta}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of probabilities, one for each element of `x`.
 #' @export
 #'
 pdf.Beta <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) dbeta(x = at, shape1 = d$alpha, shape2 = d$beta)
+  FUN <- function(at, d) dbeta(x = at, shape1 = d$alpha, shape2 = d$beta, ...)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "d", drop = drop)
 }
 
@@ -125,14 +126,15 @@ log_pdf.Beta <- function(d, x, drop = TRUE, ...) {
 #' @param x A vector of elements whose cumulative probabilities you would
 #'   like to determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{pbeta}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of probabilities, one for each element of `x`.
 #' @export
 #'
 cdf.Beta <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) pbeta(q = at, shape1 = d$alpha, shape2 = d$beta)
+  FUN <- function(at, d) pbeta(q = at, shape1 = d$alpha, shape2 = d$beta, ...)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "p", drop = drop)
 }
 
@@ -145,8 +147,9 @@ cdf.Beta <- function(d, x, drop = TRUE, ...) {
 #'
 #' @param probs A vector of probabilites.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{qbeta}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of quantiles, one for each element of `probs`.
 #' @export
@@ -154,7 +157,7 @@ cdf.Beta <- function(d, x, drop = TRUE, ...) {
 quantile.Beta <- function(x, probs, drop = TRUE, ...) {
   ellipsis::check_dots_used()
 
-  FUN <- function(at, d) qbeta(at, shape1 = x$alpha, shape2 = x$beta)
+  FUN <- function(at, d) qbeta(at, shape1 = x$alpha, shape2 = x$beta, ...)
   apply_dpqr(d = x, FUN = FUN, at = probs, type_prefix = "q", drop = drop)
 }
 

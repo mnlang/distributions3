@@ -153,14 +153,15 @@ random.Binomial <- function(x, n = 1L, drop = TRUE, ...) {
 #' @param x A vector of elements whose probabilities you would like to
 #'   determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{dbinom}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of probabilities, one for each element of `x`.
 #' @export
 #'
 pdf.Binomial <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) dbinom(x = at, size = d$size, prob = d$p)
+  FUN <- function(at, d) dbinom(x = at, size = d$size, prob = d$p, ...)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "d", drop = drop)
 }
 
@@ -179,14 +180,15 @@ log_pdf.Binomial <- function(d, x, drop = TRUE, ...) {
 #' @param x A vector of elements whose cumulative probabilities you would
 #'   like to determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{pbinom}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of probabilities, one for each element of `x`.
 #' @export
 #'
 cdf.Binomial <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) pbinom(q = at, size = d$size, prob = d$p)
+  FUN <- function(at, d) pbinom(q = at, size = d$size, prob = d$p, ...)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "p", drop = drop)
 }
 
@@ -199,15 +201,16 @@ cdf.Binomial <- function(d, x, drop = TRUE, ...) {
 #'
 #' @param probs A vector of probabilites.
 #' @param drop logical. Shoul the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{qbinom}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of quantiles, one for each element of `probs`.
 #' @export
 #'
 quantile.Binomial <- function(x, probs, drop = TRUE, ...) {
   ellipsis::check_dots_used()
-  FUN <- function(at, d) qbinom(at, size = x$size, prob = x$p)
+  FUN <- function(at, d) qbinom(at, size = x$size, prob = x$p, ...)
   apply_dpqr(d = x, FUN = FUN, at = probs, type_prefix = "q", drop = drop)
 }
 

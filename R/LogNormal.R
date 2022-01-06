@@ -131,8 +131,9 @@ random.LogNormal <- function(x, n = 1L, drop = TRUE, ...) {
 #' @param x A vector of elements whose probabilities you would like to
 #'   determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{dlnorm}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @family LogNormal distribution
 #'
@@ -140,7 +141,7 @@ random.LogNormal <- function(x, n = 1L, drop = TRUE, ...) {
 #' @export
 #'
 pdf.LogNormal <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) dlnorm(x = at, meanlog = d$log_mu, sdlog = d$log_sigma)
+  FUN <- function(at, d) dlnorm(x = at, meanlog = d$log_mu, sdlog = d$log_sigma, ...)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "d", drop = drop)
 }
 
@@ -159,8 +160,9 @@ log_pdf.LogNormal <- function(d, x, drop = TRUE, ...) {
 #' @param x A vector of elements whose cumulative probabilities you would
 #'   like to determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{plnorm}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @family LogNormal distribution
 #'
@@ -168,7 +170,7 @@ log_pdf.LogNormal <- function(d, x, drop = TRUE, ...) {
 #' @export
 #'
 cdf.LogNormal <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) plnorm(q = at, meanlog = d$log_mu, sdlog = d$log_sigma)
+  FUN <- function(at, d) plnorm(q = at, meanlog = d$log_mu, sdlog = d$log_sigma, ...)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "p", drop = drop)
 }
 
@@ -179,8 +181,9 @@ cdf.LogNormal <- function(d, x, drop = TRUE, ...) {
 #'
 #' @param probs A vector of probabilites.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{qlnorm}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of quantiles, one for each element of `probs`.
 #' @export
@@ -189,7 +192,7 @@ cdf.LogNormal <- function(d, x, drop = TRUE, ...) {
 #'
 quantile.LogNormal <- function(x, probs, drop = TRUE, ...) {
   ellipsis::check_dots_used()
-  FUN <- function(at, d) qlnorm(p = at, meanlog = d$log_mu, sdlog = d$log_sigma)
+  FUN <- function(at, d) qlnorm(p = at, meanlog = d$log_mu, sdlog = d$log_sigma, ...)
   apply_dpqr(d = x, FUN = FUN, at = probs, type_prefix = "q", drop = drop)
 }
 

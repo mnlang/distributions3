@@ -120,8 +120,9 @@ random.NegativeBinomial <- function(x, n = 1L, drop = TRUE, ...) {
 #' @param x A vector of elements whose probabilities you would like to
 #'   determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{dnbinom}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @family NegativeBinomial distribution
 #'
@@ -129,7 +130,7 @@ random.NegativeBinomial <- function(x, n = 1L, drop = TRUE, ...) {
 #' @export
 #'
 pdf.NegativeBinomial <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) dnbinom(x = at, size = d$size, prob = d$p)
+  FUN <- function(at, d) dnbinom(x = at, size = d$size, prob = d$p, ...)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "d", drop = drop)
 }
 
@@ -150,8 +151,9 @@ log_pdf.NegativeBinomial <- function(d, x, drop = TRUE, ...) {
 #' @param x A vector of elements whose cumulative probabilities you would
 #'   like to determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{pnbinom}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @family NegativeBinomial distribution
 #'
@@ -159,7 +161,7 @@ log_pdf.NegativeBinomial <- function(d, x, drop = TRUE, ...) {
 #' @export
 #'
 cdf.NegativeBinomial <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) pnbinom(q = at, size = d$size, prob = d$p)
+  FUN <- function(at, d) pnbinom(q = at, size = d$size, prob = d$p, ...)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "p", drop = drop)
 }
 
@@ -170,8 +172,9 @@ cdf.NegativeBinomial <- function(d, x, drop = TRUE, ...) {
 #'
 #' @param probs A vector of probabilites.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{qnbinom}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of quantiles, one for each element of `probs`.
 #' @export
@@ -180,7 +183,7 @@ cdf.NegativeBinomial <- function(d, x, drop = TRUE, ...) {
 #'
 quantile.NegativeBinomial <- function(x, probs, drop = TRUE, ...) {
   ellipsis::check_dots_used()
-  FUN <- function(at, d) qnbinom(p = at, size = x$size, prob = x$p)
+  FUN <- function(at, d) qnbinom(p = at, size = x$size, prob = x$p, ...)
   apply_dpqr(d = x, FUN = FUN, at = probs, type_prefix = "q", drop = drop)
 }
 

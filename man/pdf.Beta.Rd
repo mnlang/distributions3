@@ -17,8 +17,9 @@ determine given the distribution \code{d}.}
 
 \item{drop}{logical. Should the result be simplified to a vector if possible?}
 
-\item{...}{Unused. Unevaluated arguments will generate a warning to
-catch mispellings or other possible errors.}
+\item{...}{Arguments to be passed to \code{\link[stats]{dbeta}}.
+Unevaluated arguments will generate a warning to catch mispellings or other
+possible errors.}
 }
 \value{
 A vector of probabilities, one for each element of \code{x}.

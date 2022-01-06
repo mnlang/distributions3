@@ -89,8 +89,9 @@ random.Uniform <- function(x, n = 1L, drop = TRUE, ...) {
 #' @param x A vector of elements whose probabilities you would like to
 #'   determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{dunif}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of probabilities, one for each element of `x`.
 #' @export
@@ -100,7 +101,8 @@ pdf.Uniform <- function(d, x, drop = TRUE, ...) {
     dunif(
       x = at,
       min = apply(as.matrix(d)[, c("a", "b"), drop = FALSE], 1, min),
-      max = apply(as.matrix(d)[, c("a", "b"), drop = FALSE], 1, max)
+      max = apply(as.matrix(d)[, c("a", "b"), drop = FALSE], 1, max),
+      ...
     )
   }
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "d", drop = drop)
@@ -129,8 +131,9 @@ log_pdf.Uniform <- function(d, x, drop = TRUE, ...) {
 #' @param x A vector of elements whose cumulative probabilities you would
 #'   like to determine given the distribution `d`.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{punif}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of probabilities, one for each element of `x`.
 #' @export
@@ -140,7 +143,8 @@ cdf.Uniform <- function(d, x, drop = TRUE, ...) {
     punif(
       q = at,
       min = apply(as.matrix(d)[, c("a", "b"), drop = FALSE], 1, min),
-      max = apply(as.matrix(d)[, c("a", "b"), drop = FALSE], 1, max)
+      max = apply(as.matrix(d)[, c("a", "b"), drop = FALSE], 1, max),
+      ...
     )
   }
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "p", drop = drop)
@@ -155,8 +159,9 @@ cdf.Uniform <- function(d, x, drop = TRUE, ...) {
 #'
 #' @param probs A vector of probabilites.
 #' @param drop logical. Should the result be simplified to a vector if possible?
-#' @param ... Unused. Unevaluated arguments will generate a warning to
-#'   catch mispellings or other possible errors.
+#' @param ... Arguments to be passed to \code{\link[stats]{qunif}}. 
+#'   Unevaluated arguments will generate a warning to catch mispellings or other 
+#'   possible errors.
 #'
 #' @return A vector of quantiles, one for each element of `probs`.
 #' @export
@@ -167,7 +172,8 @@ quantile.Uniform <- function(x, probs, drop = TRUE, ...) {
     qunif(
       p = at,
       min = apply(as.matrix(d)[, c("a", "b"), drop = FALSE], 1, min),
-      max = apply(as.matrix(d)[, c("a", "b"), drop = FALSE], 1, max)
+      max = apply(as.matrix(d)[, c("a", "b"), drop = FALSE], 1, max),
+      ...
     )
   }
   apply_dpqr(d = x, FUN = FUN, at = probs, type_prefix = "q", drop = drop)

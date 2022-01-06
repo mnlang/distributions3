@@ -14,7 +14,9 @@
 \item{drop}{logical. Should the result be simplified to a vector if possible?
 catch mispellings or other possible errors.}
 
-\item{...}{Unused. Unevaluated arguments will generate a warning to}
+\item{...}{Arguments to be passed to \code{\link[stats]{qhyper}}.
+Unevaluated arguments will generate a warning to catch mispellings or other
+possible errors.}
 }
 \value{
 A vector of quantiles, one for each element of \code{probs}.
