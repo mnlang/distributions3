@@ -28,6 +28,20 @@ is_distribution <- function(x) {
 #' @param plot_theme specify theme of resulting plot using `ggplot2`. Default is `theme_minimal`
 #'
 #' @export
+#'
+#' @examples
+#'
+#' N1 <- Normal()
+#' plot_cdf(N1) 
+#' 
+#' N2 <- Normal(0, c(1, 2))
+#' plot_cdf(N2)
+#'
+#' B1 <- Binomial(10, 0.2)
+#' plot_cdf(B1) 
+#' 
+#' B2 <- Binomial(10, c(0.2, 0.5))
+#' plot_cdf(B2)
 plot_cdf <- function(d, limits = NULL, p = 0.001,
                      plot_theme = NULL){
 
@@ -37,39 +51,82 @@ plot_cdf <- function(d, limits = NULL, p = 0.001,
   if (is.null(plot_theme)) {
     plot_theme <- ggplot2::theme_minimal
   }
+
+  ## get limits
   if(is.null(limits))
-    limits <- support(d)
+    limits[1] <- min(support(d, drop = FALSE)[, 1])
+    limits[2] <- max(support(d, drop = FALSE)[, 2])
 
   if(limits[1] == -Inf){
-    limits[1] <- quantile(d, p = p)
+    limits[1] <- min(quantile(d, p = p))
   }
 
   if(limits[2] == Inf){
-    limits[2] <- quantile(d, p = 1-p)
+    limits[2] <- max(quantile(d, p = 1 - p))
   }
 
   if(class(d)[1] %in% c('Bernoulli', 'Binomial', 'Geometric', 'HyperGeometric',
                         'NegativeBinomial', 'Poisson')){
-    plot_df <- data.frame(x = seq(limits[1], limits[2], by = 1))
-    plot_df$y <- cdf(d, plot_df$x)
 
-    out_plot <- ggplot2::ggplot(data = plot_df,
-           ggplot2::aes_string(x = "x", y = "y")) +
-      ggplot2::geom_bar(stat = 'identity', width = 1,
-                        ggplot2::aes(color = I("black"),
-                            fill = I("grey50"))) +
+    ## span x and compute cdf
+    x <- seq(limits[1], limits[2], by = 1)
+    y <- data.frame(t(cdf(d, x, drop = FALSE)))
+    names(y) <- NULL
+
+    plot_df <- list()
+    for (i in seq_along(y)) {
+      plot_df[[i]] <- data.frame("x" = x, "y" = y[i], "group" = i)
+    }
+    plot_df <- do.call("rbind", plot_df)
+
+    ## set names
+    if (!is.null(names(d))) {
+      plot_df$group <- factor(plot_df$group, levels = 1L:length(d), labels = names(d))
+    }
+
+    ## actual plot
+    out_plot <- ggplot2::ggplot(
+        data = plot_df,
+        ggplot2::aes_string(x = "x", y = "y")
+      ) +
+      ggplot2::geom_bar(
+        stat = 'identity',
+        width = 1,
+        ggplot2::aes(
+          color = I("black"),
+          fill = I("grey50"))
+        ) +
+      ggplot2::facet_grid(group ~ .) +
       plot_theme()
   }
 
   if(class(d)[1] %in% c('Beta', 'Cauchy', 'ChiSquare', 'Exponential',
                         'FisherF', 'Gamma', 'Logistic', 'LogNormal',
                         'Normal', 'StudentsT', 'Tukey', 'Uniform', 'Weibull')){
-    plot_df <- data.frame(x = seq(limits[1], limits[2], length.out = 5000))
-    plot_df$y <- cdf(d, plot_df$x)
 
-    out_plot <- ggplot2::ggplot(data = plot_df,
-                    ggplot2::aes_string(x = "x", y = "y")) +
+    ## span x and compute cdf
+    x <- seq(limits[1], limits[2], length.out = 5000)
+    y <- data.frame(t(cdf(d, x, drop = FALSE)))
+    names(y) <- NULL
+
+    plot_df <- list()
+    for (i in seq_along(y)) {
+      plot_df[[i]] <- data.frame("x" = x, "y" = y[i], "group" = i)
+    }
+    plot_df <- do.call("rbind", plot_df)
+
+    ## set names
+    if (!is.null(names(d))) {
+      plot_df$group <- factor(plot_df$group, levels = 1L:length(d), labels = names(d))
+    }
+
+    ## actual plot
+    out_plot <- ggplot2::ggplot(
+        data = plot_df,
+        ggplot2::aes_string(x = "x", y = "y")
+      ) +
       ggplot2::geom_line() +
+      ggplot2::facet_grid(group ~ .) +
       plot_theme()
   }
 
@@ -90,6 +147,20 @@ plot_cdf <- function(d, limits = NULL, p = 0.001,
 #' @param plot_theme specify theme of resulting plot using `ggplot2`. Default is `theme_minimal`
 #'
 #' @export
+#'
+#' @examples
+#'
+#' N1 <- Normal()
+#' plot_pdf(N1) 
+#' 
+#' N2 <- Normal(0, c(1, 2))
+#' plot_pdf(N2)
+#'
+#' B1 <- Binomial(10, 0.2)
+#' plot_pdf(B1) 
+#' 
+#' B2 <- Binomial(10, c(0.2, 0.5))
+#' plot_pdf(B2)
 plot_pdf <- function(d, limits = NULL, p = 0.001,
                      plot_theme = NULL){
 
@@ -99,47 +170,89 @@ plot_pdf <- function(d, limits = NULL, p = 0.001,
   if (is.null(plot_theme)) {
     plot_theme <- ggplot2::theme_bw
   }
+
+  ## get limits
   if(is.null(limits))
-    limits <- support(d)
+    limits[1] <- min(support(d, drop = FALSE)[, 1])
+    limits[2] <- max(support(d, drop = FALSE)[, 2])
 
   if(limits[1] == -Inf){
-    limits[1] <- quantile(d, p = p)
+    limits[1] <- min(quantile(d, p = p))
   }
 
   if(limits[2] == Inf){
-    limits[2] <- quantile(d, p = 1-p)
+    limits[2] <- max(quantile(d, p = 1 - p))
   }
 
   if(class(d)[1] %in% c('Bernoulli', 'Binomial', 'Geometric', 'HyperGeometric',
                         'NegativeBinomial', 'Poisson')){
-    plot_df <- data.frame(x = seq(limits[1], limits[2], by = 1))
-    plot_df$y <- pdf(d, plot_df$x)
 
-    out_plot <- ggplot2::ggplot(data = plot_df,
-                       ggplot2::aes_string(x = "x", y = "y")) +
-     ggplot2::geom_bar(stat = 'identity', width = 1,
-               ggplot2::aes(color = I("black"),
-                   fill = I("grey50"))) +
-      #xlab("x") +
+    ## span x and compute pdf
+    x <- seq(limits[1], limits[2], by = 1)
+    y <- data.frame(t(pdf(d, x, drop = FALSE)))
+    names(y) <- NULL
+
+    plot_df <- list()
+    for (i in seq_along(y)) {
+      plot_df[[i]] <- data.frame("x" = x, "y" = y[i], "group" = i)
+    }
+    plot_df <- do.call("rbind", plot_df)
+
+    ## set names
+    if (!is.null(names(d))) {
+      plot_df$group <- factor(plot_df$group, levels = 1L:length(d), labels = names(d))
+    }
+
+    ## actual plot
+    out_plot <- ggplot2::ggplot(
+        data = plot_df,
+        ggplot2::aes_string(x = "x", y = "y")
+      ) +
+      ggplot2::geom_bar(
+        stat = 'identity', 
+        width = 1,
+        ggplot2::aes(
+          color = I("black"),
+          fill = I("grey50"))
+        ) +
+      ggplot2::facet_grid(group ~ .) +
       plot_theme()
   }
 
   if(class(d)[1] %in% c('Beta', 'Cauchy', 'ChiSquare', 'Exponential',
                         'FisherF', 'Gamma', 'Logistic', 'LogNormal',
                         'Normal', 'StudentsT', 'Tukey', 'Uniform', 'Weibull')){
-    plot_df <- data.frame(x = seq(limits[1], limits[2], length.out = 5000))
-    plot_df$y <- pdf(d, plot_df$x)
 
-    out_plot <- ggplot2::ggplot(data = plot_df,
-                    ggplot2::aes_string(x = "x", y = "y")) +
+    ## span x and compute pdf
+    x <- seq(limits[1], limits[2], length.out = 5000)
+    y <- data.frame(t(pdf(d, x, drop = FALSE)))
+    names(y) <- NULL
+
+    plot_df <- list()
+    for (i in seq_along(y)) {
+      plot_df[[i]] <- data.frame("x" = x, "y" = y[i], "group" = i)
+    }
+    plot_df <- do.call("rbind", plot_df)
+
+    ## set names
+    if (!is.null(names(d))) {
+      plot_df$group <- factor(plot_df$group, levels = 1L:length(d), labels = names(d))
+    }
+
+    ## actual plot
+    out_plot <- ggplot2::ggplot(
+        data = plot_df,
+        ggplot2::aes_string(x = "x", y = "y")
+      ) +
       ggplot2::geom_line() +
+      ggplot2::facet_grid(group ~ .) +
       plot_theme()
   }
 
+  ## save parameters for "stat_auc"
   out_plot$mapping$d <- class(d)[1]
-
-  for(i in seq_along(d))
-    out_plot$mapping[[paste0("param", i)]] <- d[[i]]
+  for(i in seq_along(colnames(d)))
+    out_plot$mapping[[paste0("param", i)]] <- rep(as.matrix(d)[, i], each = length(x))
 
   return(out_plot)
 }
@@ -232,10 +345,13 @@ StatAuc <- ggplot2::ggproto("StatAuc", ggplot2::Stat,
 #'
 #' @examples
 #'
-#' X <- Normal()
-#'
-#' plot_pdf(X) + geom_auc(to = -0.645)
-#' plot_pdf(X) + geom_auc(from = -0.645, to = 0.1, annotate = TRUE)
+#' N1 <- Normal()
+#' plot_pdf(N1) + geom_auc(to = -0.645)
+#' plot_pdf(N1) + geom_auc(from = -0.645, to = 0.1, annotate = TRUE)
+#' 
+#' N2 <- Normal(0, c(1, 2))
+#' plot_pdf(N2) + geom_auc(to = 0)
+#' plot_pdf(N2) + geom_auc(from = -2, to = 2, annotate = TRUE)
 geom_auc <- function(mapping = NULL,
                      data = NULL,
                      stat = "auc",
