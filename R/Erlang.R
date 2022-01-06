@@ -33,6 +33,8 @@
 #' cdf(X, quantile(X, 0.7))
 #' quantile(X, cdf(X, 7))
 Erlang <- function(k, lambda) {
+
+  stopifnot("'k' must be an integer"  = all(abs(k - as.integer(k)) == 0))
   stopifnot(
     "parameter lengths do not match (only scalars are allowed to be recycled)" =
     length(k) == length(lambda) | length(k) == 1 | length(lambda) == 1
@@ -56,7 +58,7 @@ Erlang <- function(k, lambda) {
 #' @export
 #'
 random.Erlang <- function(x, n = 1L, drop = TRUE, ...) {
-  FUN <- function(at, d) rerlang(n = length(d), k = d$k, lambda = d$lambda)
+  FUN <- function(at, d) rgamma(n = length(d), shape = d$k, rate = d$lambda)
   apply_dpqr(d = x, FUN = FUN, at = rep.int(1, n), type_prefix = "r", drop = drop)
 }
 
@@ -75,7 +77,7 @@ random.Erlang <- function(x, n = 1L, drop = TRUE, ...) {
 #' @export
 #'
 pdf.Erlang <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) derlang(x = at, k = d$k, lambda = d$lambda, ...)
+  FUN <- function(at, d) dgamma(x = at, shape = d$k, rate = d$lambda)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "d", drop = drop)
 }
 
@@ -83,7 +85,7 @@ pdf.Erlang <- function(d, x, drop = TRUE, ...) {
 #' @export
 #'
 log_pdf.Erlang <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) derlang(x = at, k = d$k, lambda = d$lambda, log = TRUE, ...)
+  FUN <- function(at, d) dgamma(x = at, shape = d$k, rate = d$lambda, log = TRUE)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "l", drop = drop)
 }
 
@@ -102,7 +104,7 @@ log_pdf.Erlang <- function(d, x, drop = TRUE, ...) {
 #' @export
 #'
 cdf.Erlang <- function(d, x, drop = TRUE, ...) {
-  FUN <- function(at, d) perlang(q = at, k = d$k, lambda = d$lambda, ...)
+  FUN <- function(at, d) pgamma(q = at, shape = d$k, rate = d$lambda)
   apply_dpqr(d = d, FUN = FUN, at = x, type_prefix = "p", drop = drop)
 }
 
@@ -124,7 +126,7 @@ cdf.Erlang <- function(d, x, drop = TRUE, ...) {
 quantile.Erlang <- function(x, probs, drop = TRUE, ...) {
   ellipsis::check_dots_used()
 
-  FUN <- function(at, d) qerlang(at, k = d$k, lambda = d$lambda)
+  FUN <- function(at, d) qgamma(p = at, shape = d$k, rate = d$lambda)
   apply_dpqr(d = x, FUN = FUN, at = probs, type_prefix = "q", drop = drop)
 }
 
@@ -147,67 +149,3 @@ support.Erlang <- function(d, drop = TRUE) {
 
   make_support(min, max, drop = drop)
 }
-
-rerlang <- function(n, k, lambda) {
-  
-  stopifnot(is.numeric(n) && is.null(dim(n)))
-
-  par <- data.frame(k, lambda)
-
-  -1 / par$lambda * colSums(log(matrix(runif(n = n * par$k), ncol = n)))
-}
-
-derlang <- function(x, k, lambda, log = FALSE) {
-
-  stopifnot(all(x >= 0))
-
-  par <- data.frame(k, lambda)
-
-  rval <- par$k * log(par$lambda) + (par$k - 1) * log(x) - par$lambda * x - lgamma(par$k)
-
-  if (isTRUE(log)) {
-    rval
-  } else {
-    exp(rval)
-  }
-}
-
-perlang <- function(q, k, lambda, lower.tail = TRUE, log.p = FALSE) {
-
-  stopifnot(all(q >= 0))
-
-  # FIXME: lower.tail, log.p currently not supported
-  # FIXME: Simplify function
-
-  par <- data.frame(k, lambda)
-
-  internal <- Vectorize(FUN = function(par, q) {
-    summation <- vector(mode = "numeric", length = par$k)
-    n <- 0:(par$k - 1)
-    summation <- 1 / factorial(n) * exp(-par$lambda * q) * (par$lambda * q)^n
-    return(1 - sum(summation))
-  }, vectorize.args = "q")
-  internal(par = par, q = q)
-}
-
-qerlang <- function(p, k, lambda, lower.tail = TRUE, log.p = FALSE, 
-                    interval = c(0, 1e6), tol = .Machine$double.eps) {
-# interval Interval being used to search for the quantile using numerical root finding. Defaults to (0, 1e6)
-# tol Tolerance of the root finding algorithm. Defaults to `.Machine$double.eps`
-
-  stopifnot(all(p >= 0 & p <=1))
-
-  # FIXME: lower.tail, log.p currently not supported
-  # FIXME: Simplify function (remove interval and tol)
-
-  par <- data.frame(k, lambda)
-
-  p[p == 1] <- (1 - .Machine$double.eps^0.25)
-  internal <- Vectorize(FUN = function(par, p, interval, tol) {
-    qf <- function(x) perlang(q = x, k = par$k, lambda = par$lambda) - p
-    root <- stats::uniroot(qf, interval = interval, tol = tol, check.conv = TRUE)
-    return(root$root)
-  }, vectorize.args = "p")
-  internal(par = par, p = p, interval = interval, tol = tol)
-}
-

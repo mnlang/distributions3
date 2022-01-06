@@ -1,11 +1,25 @@
+# Compare: https://en.wikipedia.org/wiki/Erlang_distribution
+#
+# The Erlang distribution is a special case of the gamma distribution wherein
+# the shape (k) of the distribution is discretised. 
+
 context("test-Erlang")
-e <- Erlang(lambda = 0.5, k = 3)
+e <- Erlang(k = 3, lambda = 0.5)
+
+test_that("Erlang constructor works", {
+  expect_error(Erlang(k = 3.1, lambda = 0.5))
+})
 
 test_that("print.Erlang works", {
   expect_output(print(e), regexp = "Erlang distribution")
 })
 
 test_that("random.Erlang works correctly", {
+
+  set.seed(123); r1 <- random(e, 3)
+  set.seed(123); r2 <- rgamma(3, shape = 3, rate = 0.5)
+  expect_equal(r1, r2)
+
   expect_length(random(e), 1)
   expect_length(random(e, 100), 100)
   expect_length(random(e, 0), 0)
@@ -13,36 +27,44 @@ test_that("random.Erlang works correctly", {
 })
 
 test_that("pdf.Erlang works correctly", {
+
+  expect_equal(pdf(e, 0), dgamma(0, shape = 3, rate = 0.5))
+  expect_equal(pdf(e, 1), dgamma(1, shape = 3, rate = 0.5))
+
   expect_length(pdf(e, seq_len(0)), 0)
   expect_length(pdf(e, seq_len(1)), 1)
   expect_length(pdf(e, seq_len(10)), 10)
-  expect_error(pdf(e, -42))
 })
 
 test_that("log_pdf.Erlang works correctly", {
+
+  expect_equal(log_pdf(e, 0), log(dgamma(0, shape = 3, rate = 0.5)))
+  expect_equal(log_pdf(e, 1), log(dgamma(1, shape = 3, rate = 0.5)))
+
   expect_length(log_pdf(e, seq_len(0)), 0)
   expect_length(log_pdf(e, seq_len(1)), 1)
   expect_length(log_pdf(e, seq_len(10)), 10)
-  expect_error(log_pdf(e, -42))
 })
 
 test_that("cdf.Erlang works correctly", {
+
+  expect_equal(cdf(e, 0.3), pgamma(0.3, shape = 3, rate = 0.5))
+  expect_equal(cdf(e, 1), pgamma(1, shape = 3, rate = 0.5))
+
   expect_equal(cdf(e, 0), 0)
   expect_length(cdf(e, seq_len(0)), 0)
   expect_length(cdf(e, seq_len(1)), 1)
   expect_length(cdf(e, seq_len(10)), 10)
-  expect_error(cdf(e, -42))
 })
 
 test_that("quantile.Erlang works correctly", {
+
+  expect_equal(quantile(e, 0.3), qgamma(0.3, shape = 3, rate = 0.5))
+  expect_equal(quantile(e, 1), qgamma(1, shape = 3, rate = 0.5))
+
   expect_equal(quantile(e, 0), 0)
   expect_length(quantile(e, seq_len(1)), 1)
   expect_length(quantile(e, seq(0.1, 0.9, by = 0.1)), 9)
-  expect_error(quantile(e, p = -42))
-  expect_error(quantile(e, p = 42))
-  expect_error(quantile(e, p = 0.5, interval = 42))
-  expect_error(quantile(e, p = 0.5, interval = "Hi"))
-  expect_error(quantile(e, p = 0.5, tol = "Hi"))
 })
 
 test_that("support.Erlang works correctly", {
@@ -50,7 +72,7 @@ test_that("support.Erlang works correctly", {
 })
 
 test_that("vectorization of a Erlang distribution work correctly", {
-  d <- Erlang(c(0.5, 0.8), 3)
+  d <- Erlang(3, c(0.5, 0.8))
   d1 <- d[1]
   d2 <- d[2]
 
